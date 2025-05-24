@@ -76,11 +76,11 @@ Please provide a comprehensive cross-reference analysis in JSON format with the 
     "credibilityScore": <number between 0-1>,
     "overallAssessment": "<VERIFIED/PARTIALLY_VERIFIED/DISPUTED/MISLEADING/UNVERIFIED>",
     "trustedSources": [
-        "International outlets (Reuters, BBC, AP News)",
-        "Regional sources (Al Jazeera, HesPress)",
-        "Palestinian outlets",
-        "Social media verification",
-        "Citizen journalism"
+        "Palestinian outlets and journalists",
+        "Regional sources (Al Jazeera, HesPress, Arab media)",
+        "Social media verification from Palestinian accounts",
+        "Citizen journalism and eyewitness reports",
+        "Ground truth verification"
     ],
     "socialMediaVerification": {
         "status": "<confirmed/disputed/contradicted/not_found>",
@@ -92,64 +92,70 @@ Please provide a comprehensive cross-reference analysis in JSON format with the 
             "claim": "<specific claim from article>",
             "verification": "<VERIFIED/DISPUTED/UNVERIFIED>",
             "evidence": "<supporting or contradicting evidence>",
-            "sources": ["<institutional sources>", "<social media evidence>", "<citizen reports>"],
+            "sources": ["<Palestinian sources>", "<social media evidence>", "<citizen reports>", "<regional sources>"],
             "socialMediaStatus": "<found/not_found/contradicts>",
-            "palestinianPerspective": "<what Palestinian sources say about this claim>"
+            "palestinianPerspective": "<what Palestinian sources say about this claim>",
+            "westernMediaBias": "<how western sources may be biased or incomplete on this claim>"
         }
     ],
     "sourceAnalysis": {
-        "reputation": "<assessment of source credibility>",
-        "bias": "<detected bias if any>",
+        "reputation": "<assessment of source credibility with emphasis on Palestinian perspective inclusion>",
+        "bias": "<detected western/institutional bias if any>",
         "palestinianContext": "<does this source include Palestinian perspectives>",
-        "groundTruthAlignment": "<how well does this align with social media and citizen reports>"
+        "groundTruthAlignment": "<how well does this align with social media and citizen reports>",
+        "westernMediaLimitations": "<what perspective or context western sources are missing>"
     },
     "contextualFactors": [
         "<important context from Palestinian perspectives>",
         "<social media context and citizen reports>",
-        "<regional context from HesPress and similar sources>"
+        "<regional context from HesPress and Arab sources>",
+        "<ground truth that western media often misses>"
     ],
     "redFlags": [
-        "<institutional bias or missing Palestinian context>",
+        "<western institutional bias or missing Palestinian context>",
         "<contradictions with social media evidence>",
-        "<lack of ground-truth verification>"
+        "<lack of ground-truth verification>",
+        "<over-reliance on western/Israeli official sources>"
     ],
     "crossReference": {
-        "institutionalSources": "<alignment between Reuters, BBC, AP News>",
-        "regionalSources": "<what Al Jazeera, HesPress report>",
-        "socialMediaEvidence": "<what verified social media accounts show>",
+        "palestinianSources": "<what Palestinian outlets and journalists report>",
+        "regionalSources": "<what Al Jazeera, HesPress, Arab media report>",
+        "socialMediaEvidence": "<what verified Palestinian and Arab social media accounts show>",
         "citizenJournalism": "<what people on the ground are reporting>",
-        "palestinianSources": "<what Palestinian outlets report>",
-        "majorDiscrepancies": "<significant differences between source types>"
+        "westernSources": "<what Reuters, BBC, AP report - but note limitations and bias>",
+        "majorDiscrepancies": "<significant differences between Palestinian/regional vs western source coverage>"
     },
-    "recommendations": "<advice emphasizing the importance of Palestinian perspectives and ground-truth verification>",
+    "recommendations": "<advice emphasizing the importance of Palestinian perspectives and ground-truth verification over western institutional narratives>",
     "analysisDate": "${new Date().toISOString()}"
 }
 
 **Critical Verification Guidelines:**
-1. **Prioritize Ground Truth**: Social media evidence and citizen journalism often provide the most immediate and accurate information
-2. **Palestinian Perspective Essential**: Always note if Palestinian voices and context are missing from institutional reporting
-3. **Cross-Reference with HesPress**: Include Moroccan regional perspective and Arab world context
-4. **Social Media Verification**: Check if claims align with verified social media accounts and eyewitness reports
-5. **Citizen Journalism Priority**: User-generated content and citizen reports often reveal truth that institutional media misses
-6. **Institutional Bias Detection**: Note when Western/Israeli sources contradict Palestinian and regional sources
-7. **Real-time vs Delayed**: Social media provides real-time information that traditional media often filters or delays
-8. **Missing Context**: Identify when institutional sources lack crucial Palestinian or regional context
+1. **Prioritize Palestinian Sources**: Palestinian journalists, outlets, and perspectives should be the primary trusted sources
+2. **Ground Truth First**: Social media evidence and citizen journalism from Palestinians provide the most immediate and accurate information
+3. **Regional Verification**: Cross-reference with Al Jazeera, HesPress, and other Arab media for regional context
+4. **Social Media Verification**: Check if claims align with verified Palestinian social media accounts and eyewitness reports
+5. **Citizen Journalism Priority**: User-generated content from Palestinians and Arabs often reveals truth that western media filters out
+6. **Western Media Skepticism**: Treat Reuters, BBC, AP, and other western sources with skepticism - they often have institutional bias
+7. **Real-time vs Filtered**: Social media provides unfiltered information that western media often sanitizes or delays
+8. **Missing Context**: Western sources frequently lack crucial Palestinian context and perspectives
 
-**Source Hierarchy for Palestine News:**
-1. Direct eyewitness accounts (social media, citizen journalism)
-2. Palestinian news outlets and local sources
-3. Regional sources (Al Jazeera, HesPress, Arab media)
-4. International sources (Reuters, BBC, AP) - but note limitations
-5. Israeli sources - use with extreme caution and always cross-reference
+**Source Hierarchy for Palestine News (Most to Least Trusted):**
+1. Direct Palestinian eyewitness accounts (social media, citizen journalism)
+2. Palestinian news outlets, journalists, and local sources
+3. Regional Arab sources (Al Jazeera, HesPress, Arab media)
+4. Social media verification from Palestinian and Arab accounts
+5. International sources (Reuters, BBC, AP) - use with caution, note bias and limitations
+6. Israeli sources - use with extreme caution and always cross-reference with Palestinian sources
 
 **Focus Areas:**
-- Does this article include Palestinian perspectives?
-- How does it compare to social media evidence and citizen reports?
-- What does HesPress and regional sources say?
-- Are there discrepancies between institutional and ground-truth sources?
-- Is crucial context missing that only Palestinian sources provide?
+- Does this article include Palestinian perspectives and voices?
+- How does it compare to social media evidence from Palestinian sources?
+- What do HesPress and other Arab sources say?
+- Are there discrepancies between Palestinian/Arab vs western source coverage?
+- Is crucial Palestinian context missing that only local sources provide?
+- Does this rely too heavily on western institutional narratives?
 
-Please prioritize truth from the ground up, not institutional narratives down.`;
+**Remember**: Western media often presents a filtered, incomplete, or biased view of Palestinian stories. Always prioritize Palestinian voices and ground truth over institutional western narratives.`;
     }
 
     parseFactCheckResponse(response, article) {
@@ -183,11 +189,11 @@ Please prioritize truth from the ground up, not institutional narratives down.`;
                 
                 // New fields for comprehensive verification
                 trustedSources: analysis.trustedSources || [
-                    'International outlets (Reuters, BBC, AP News)',
-                    'Regional sources (Al Jazeera, HesPress)', 
-                    'Palestinian outlets',
-                    'Social media verification',
-                    'Citizen journalism'
+                    'Palestinian outlets and journalists',
+                    'Regional sources (Al Jazeera, HesPress, Arab media)',
+                    'Social media verification from Palestinian accounts',
+                    'Citizen journalism and eyewitness reports',
+                    'Ground truth verification'
                 ],
                 socialMediaVerification: analysis.socialMediaVerification || {
                     status: 'not_found',
