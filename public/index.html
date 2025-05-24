@@ -219,15 +219,101 @@
             margin-bottom: 5px;
             font-weight: bold;
             color: #333;
-        }
-
-        .form-group input,
-        .form-group textarea {
+        }        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .social-post-result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .social-post-content {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+        }
+
+        .character-count {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .hashtags {
+            color: #1976d2;
+            margin-top: 8px;
+        }        .warning-text {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .warning-high {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .warning-medium {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+
+        .warning-low {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .copy-button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .copy-button:hover {
+            background: #218838;
         }
 
         .form-group textarea {
@@ -295,6 +381,43 @@
             <h2 id="currentViewTitle">📰 Latest Palestine News</h2>
             <div class="loading" id="loading" style="display: none;">Loading articles...</div>
             <div id="articlesContainer"></div>
+        </div>        <div class="analyze-section">
+            <h2>📱 Generate Social Media Posts</h2>
+            <p>Create engaging social media posts about fact-checked news articles</p>
+            
+            <div class="form-group">
+                <label for="socialArticleSelect">Select Fact-Checked Article:</label>
+                <select id="socialArticleSelect" class="form-control">
+                    <option value="">Loading articles...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="platformSelect">Platform:</label>
+                <select id="platformSelect" class="form-control">
+                    <option value="twitter">Twitter</option>
+                    <option value="facebook">Facebook</option>
+                    <option value="instagram">Instagram</option>
+                    <option value="linkedin">LinkedIn</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="toneSelect">Tone:</label>
+                <select id="toneSelect" class="form-control">
+                    <option value="informative">Informative</option>
+                    <option value="engaging">Engaging</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="professional">Professional</option>
+                </select>
+            </div>
+              <div class="controls">
+                <button class="btn" onclick="generateSocialPost()">📱 Generate Single Post</button>
+                <button class="btn" onclick="generateMultiplePosts()">🌐 Generate for All Platforms</button>
+                <button class="btn" onclick="loadSocialReadyArticles()">🔄 Refresh Articles</button>
+            </div>
+            
+            <div id="socialPostResult"></div>
         </div>
 
         <div class="analyze-section">
@@ -321,12 +444,11 @@
     <script>
         let currentView = 'news'; // 'news' or 'factcheck'
         let articlesData = [];
-        let factCheckData = [];
-
-        // Initialize the application
+        let factCheckData = [];        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             loadInitialData();
             setupEventListeners();
+            loadSocialReadyArticles();
         });
 
         function setupEventListeners() {
@@ -337,6 +459,244 @@
             await refreshNews();
             await refreshFactChecks();
             updateDashboard();
+        }
+
+        async function loadSocialReadyArticles() {
+            try {
+                const response = await fetch('/api/social-ready-articles?limit=20');
+                const data = await response.json();
+                
+                if (data.success) {
+                    populateArticleSelect(data.articles);
+                }
+            } catch (error) {
+                console.error('Error loading social-ready articles:', error);
+            }
+        }
+
+        function populateArticleSelect(articles) {
+            const select = document.getElementById('socialArticleSelect');
+            
+            if (!articles || articles.length === 0) {
+                select.innerHTML = '<option value="">No fact-checked articles available</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="">Select an article...</option>' +
+                articles.map(article => `
+                    <option value="${article.id}" data-credibility="${article.credibilityScore}">
+                        ${escapeHtml(article.title)} (${Math.round(article.credibilityScore * 100)}%)
+                    </option>
+                `).join('');
+        }
+
+        async function generateSocialPost() {
+            const articleId = document.getElementById('socialArticleSelect').value;
+            const platform = document.getElementById('platformSelect').value;
+            const tone = document.getElementById('toneSelect').value;
+            
+            if (!articleId) {
+                alert('Please select an article first');
+                return;
+            }
+
+            const resultDiv = document.getElementById('socialPostResult');
+            resultDiv.innerHTML = '<div class="loading">Generating social media post...</div>';
+
+            try {
+                const response = await fetch('/api/generate-social-post', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ articleId, platform, tone })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displaySocialPost(data.socialPost, data.article);
+                } else {
+                    resultDiv.innerHTML = `<div class="warning-text">Failed to generate post: ${data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Error generating social post:', error);
+                resultDiv.innerHTML = '<div class="warning-text">Failed to generate post. Please try again.</div>';
+            }
+        }
+
+        async function generateMultiplePosts() {
+            const articleId = document.getElementById('socialArticleSelect').value;
+            const tone = document.getElementById('toneSelect').value;
+            
+            if (!articleId) {
+                alert('Please select an article first');
+                return;
+            }
+
+            const resultDiv = document.getElementById('socialPostResult');
+            resultDiv.innerHTML = '<div class="loading">Generating posts for all platforms...</div>';
+
+            try {
+                const platforms = ['twitter', 'facebook', 'instagram', 'linkedin'];
+                const response = await fetch('/api/generate-multiple-posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ articleId, platforms, tone })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayMultipleSocialPosts(data.socialPosts, data.article);
+                } else {
+                    resultDiv.innerHTML = `<div class="warning-text">Failed to generate posts: ${data.error}</div>`;
+                }
+            } catch (error) {
+                console.error('Error generating multiple posts:', error);
+                resultDiv.innerHTML = '<div class="warning-text">Failed to generate posts. Please try again.</div>';
+            }
+        }
+
+        function displaySocialPost(socialPost, article) {
+            const resultDiv = document.getElementById('socialPostResult');
+            
+            let html = `
+                <div class="social-post-result">
+                    <h3>📱 Generated Social Media Post</h3>
+                    <p><strong>Article:</strong> ${escapeHtml(article.title)}</p>
+                    <p><strong>Credibility Score:</strong> ${Math.round(socialPost.credibilityScore * 100)}%</p>
+                    
+                    <div class="social-post-content">
+                        <div class="platform-badge">${socialPost.platform.toUpperCase()}</div>
+                        <div class="post-text">${escapeHtml(socialPost.post)}</div>
+                        
+                        ${socialPost.hashtags && socialPost.hashtags.length > 0 ? `
+                            <div class="hashtags">${socialPost.hashtags.join(' ')}</div>
+                        ` : ''}
+                        
+                        <div class="character-count">Characters: ${socialPost.characterCount || socialPost.post.length}</div>
+                          ${socialPost.warnings && socialPost.warnings.includeFactCheckWarning ? `
+                            <div class="warning-text ${socialPost.warnings.warningLevel ? 'warning-' + socialPost.warnings.warningLevel : ''}">
+                                ⚠️ ${socialPost.warnings.warningText || 'This content requires fact-checking verification'}
+                            </div>
+                        ` : ''}
+                        
+                        <button class="copy-button" onclick="copyToClipboard('${escapeHtml(socialPost.post + (socialPost.hashtags ? ' ' + socialPost.hashtags.join(' ') : ''))}')">
+                            📋 Copy Post
+                        </button>
+                    </div>
+                    
+                    ${socialPost.alternativeVersions && socialPost.alternativeVersions.length > 0 ? `
+                        <div style="margin-top: 15px;">
+                            <h4>Alternative Versions:</h4>
+                            ${socialPost.alternativeVersions.map(alt => `
+                                <div class="social-post-content">
+                                    <strong>${alt.style}:</strong><br>
+                                    ${escapeHtml(alt.content)}
+                                    <button class="copy-button" onclick="copyToClipboard('${escapeHtml(alt.content)}')">
+                                        📋 Copy
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                      ${socialPost.visualSuggestions && socialPost.visualSuggestions.length > 0 ? `
+                        <div style="margin-top: 15px;">
+                            <h4>📸 Visual Suggestions:</h4>
+                            <ul>
+                                ${socialPost.visualSuggestions.map(suggestion => `
+                                    <li>${escapeHtml(suggestion)}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    
+                    ${socialPost.responsibleSharing ? `
+                        <div style="margin-top: 15px;">
+                            <h4>🎯 Responsible Sharing Tips:</h4>
+                            ${socialPost.responsibleSharing.tips ? `
+                                <ul>
+                                    ${socialPost.responsibleSharing.tips.map(tip => `
+                                        <li>${escapeHtml(tip)}</li>
+                                    `).join('')}
+                                </ul>
+                            ` : ''}
+                            ${socialPost.responsibleSharing.verificationSources ? `
+                                <p><strong>Verify with these sources:</strong> ${socialPost.responsibleSharing.verificationSources.join(', ')}</p>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+
+        function displayMultipleSocialPosts(socialPosts, article) {
+            const resultDiv = document.getElementById('socialPostResult');
+            
+            let html = `
+                <div class="social-post-result">
+                    <h3>🌐 Generated Social Media Posts</h3>
+                    <p><strong>Article:</strong> ${escapeHtml(article.title)}</p>
+                    
+                    ${Object.entries(socialPosts).map(([platform, post]) => {
+                        if (post.error) {
+                            return `
+                                <div class="social-post-content">
+                                    <div class="platform-badge">${platform.toUpperCase()}</div>
+                                    <div class="warning-text">Error: ${post.error}</div>
+                                </div>
+                            `;
+                        }
+                        
+                        return `
+                            <div class="social-post-content">
+                                <div class="platform-badge">${platform.toUpperCase()}</div>
+                                <div class="post-text">${escapeHtml(post.post)}</div>
+                                
+                                ${post.hashtags && post.hashtags.length > 0 ? `
+                                    <div class="hashtags">${post.hashtags.join(' ')}</div>
+                                ` : ''}
+                                
+                                <div class="character-count">Characters: ${post.characterCount || post.post.length}</div>
+                                  ${post.warnings && post.warnings.includeFactCheckWarning ? `
+                                    <div class="warning-text ${post.warnings.warningLevel ? 'warning-' + post.warnings.warningLevel : ''}">
+                                        ⚠️ ${post.warnings.warningText || 'This content requires fact-checking verification'}
+                                    </div>
+                                ` : ''}
+                                
+                                <button class="copy-button" onclick="copyToClipboard('${escapeHtml(post.post + (post.hashtags ? ' ' + post.hashtags.join(' ') : ''))}')">
+                                    📋 Copy Post
+                                </button>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            resultDiv.innerHTML = html;
+        }
+
+        function copyToClipboard(text) {
+            // Remove HTML escaping for clipboard
+            const textarea = document.createElement('textarea');
+            textarea.value = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = '✅ Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
         }
 
         async function refreshNews() {
@@ -357,9 +717,7 @@
             } finally {
                 showLoading(false);
             }
-        }
-
-        async function refreshFactChecks() {
+        }        async function refreshFactChecks() {
             try {
                 const response = await fetch('/api/fact-check');
                 const data = await response.json();
@@ -370,6 +728,8 @@
                         displayFactChecks(factCheckData);
                     }
                     updateDashboard();
+                    // Also refresh the social media article list
+                    loadSocialReadyArticles();
                 }
             } catch (error) {
                 console.error('Error fetching fact-checks:', error);

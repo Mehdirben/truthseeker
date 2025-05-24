@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 
 import { NewsScraper } from './scrapers/NewsScraper.js';
 import { FactChecker } from './fact-checker/FactChecker.js';
+import { SocialMediaPostGenerator } from './social-media/SocialMediaPostGenerator.js';
 import { logger } from './utils/logger.js';
 
 // Load environment variables
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Initialize services
 const newsScraper = new NewsScraper();
 const factChecker = new FactChecker();
+const socialMediaGenerator = new SocialMediaPostGenerator();
 
 // Store for processed articles
 let processedArticles = [];
@@ -82,6 +84,158 @@ app.post('/api/analyze', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to analyze article'
+        });
+    }
+});
+
+// Generate social media post for a specific article
+app.post('/api/generate-social-post', async (req, res) => {
+    try {
+        const { articleId, platform = 'twitter', tone = 'informative' } = req.body;
+        
+        if (!articleId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Article ID is required'
+            });
+        }
+
+        // Find the article in fact check results
+        const result = factCheckResults.find(r => 
+            r.url === articleId || 
+            r.articleUrl === articleId ||
+            factCheckResults.indexOf(r).toString() === articleId
+        );
+        
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                error: 'Article not found in fact-check results'
+            });
+        }
+
+        const article = {
+            title: result.articleTitle || result.title,
+            source: result.articleSource || result.source,
+            url: result.articleUrl || result.url,
+            publishedAt: result.publishedAt
+        };
+
+        const socialPost = await socialMediaGenerator.generatePost(
+            article, 
+            result.analysis || result, 
+            platform, 
+            tone
+        );
+        
+        res.json({
+            success: true,
+            socialPost: socialPost,
+            article: article
+        });
+    } catch (error) {
+        logger.error('Error generating social media post:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to generate social media post'
+        });
+    }
+});
+
+// Generate social media posts for multiple platforms
+app.post('/api/generate-multiple-posts', async (req, res) => {
+    try {
+        const { 
+            articleId, 
+            platforms = ['twitter', 'facebook'], 
+            tone = 'informative' 
+        } = req.body;
+        
+        if (!articleId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Article ID is required'
+            });
+        }
+
+        // Find the article in fact check results
+        const result = factCheckResults.find(r => 
+            r.url === articleId || 
+            r.articleUrl === articleId ||
+            factCheckResults.indexOf(r).toString() === articleId
+        );
+        
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                error: 'Article not found in fact-check results'
+            });
+        }
+
+        const article = {
+            title: result.articleTitle || result.title,
+            source: result.articleSource || result.source,
+            url: result.articleUrl || result.url,
+            publishedAt: result.publishedAt
+        };
+
+        const socialPosts = await socialMediaGenerator.generateMultiplePosts(
+            article, 
+            result.analysis || result, 
+            platforms, 
+            tone
+        );
+        
+        res.json({
+            success: true,
+            socialPosts: socialPosts,
+            article: article,
+            platforms: platforms
+        });
+    } catch (error) {
+        logger.error('Error generating multiple social media posts:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to generate social media posts'
+        });
+    }
+});
+
+// Get latest fact-checked articles suitable for social media posting
+app.get('/api/social-ready-articles', (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10;
+        const minCredibility = parseFloat(req.query.minCredibility) || 0.3;
+        
+        // Filter articles that are suitable for social media posting
+        const socialReadyArticles = factCheckResults
+            .filter(result => {
+                const credibility = result.analysis?.credibilityScore || result.credibilityScore || 0;
+                return credibility >= minCredibility;
+            })
+            .slice(-limit)
+            .map((result, index) => ({
+                id: factCheckResults.length - limit + index,
+                title: result.articleTitle || result.title,
+                source: result.articleSource || result.source,
+                url: result.articleUrl || result.url,
+                credibilityScore: result.analysis?.credibilityScore || result.credibilityScore || 0,
+                overallAssessment: result.analysis?.overallAssessment || result.overallAssessment || 'UNVERIFIED',
+                processedAt: result.processedAt,
+                keyFindings: result.analysis?.keyFindings || [],
+                redFlags: result.analysis?.redFlags || []
+            }));
+        
+        res.json({
+            success: true,
+            count: socialReadyArticles.length,
+            articles: socialReadyArticles
+        });
+    } catch (error) {
+        logger.error('Error fetching social-ready articles:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch social-ready articles'
         });
     }
 });
