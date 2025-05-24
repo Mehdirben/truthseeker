@@ -13,6 +13,7 @@ An intelligent, automated AI agent that continuously monitors Palestine-related 
 - [API Documentation](#-api-documentation)
 - [Technical Details](#-technical-details)
 - [Social Media Integration](#-social-media-integration)
+- [Automated Twitter Posting](#-automated-twitter-posting)
 - [Fact-Checking Process](#-fact-checking-process)
 - [Monitoring & Analytics](#-monitoring--analytics)
 - [Contributing](#-contributing)
@@ -70,6 +71,13 @@ News Sources → Web Scraping → AI Analysis → Fact-Checking → Social Media
 - **Error Recovery**: Robust error handling and retry mechanisms
 - **Performance Monitoring**: Built-in logging and analytics
 
+### 🐦 **Twitter Auto-Posting**
+- **Intelligent Queue Management**: Automatically posts high-credibility articles
+- **Smart Scheduling**: Posts 4 times daily at optimal engagement times
+- **Quality Filtering**: Only posts articles with ≥70% credibility scores
+- **Rate Limiting**: Respects Twitter API limits (max 5 posts/day)
+- **Real-time Monitoring**: Comprehensive logging and error handling
+
 ## 🏗️ System Architecture
 
 ### 📊 High-Level Architecture
@@ -90,6 +98,15 @@ News Sources → Web Scraping → AI Analysis → Fact-Checking → Social Media
 │ • Facebook API  │    │ • Post Gen      │    │ • Claim Check   │
 │ • LinkedIn API  │    │ • Content Opt   │    │ • Score Calc    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+                                │
+                       ┌─────────────────┐
+                       │ Twitter AutoBot │
+                       │                 │
+                       │ • Auto Queue    │
+                       │ • Smart Schedule│
+                       │ • Rate Limiting │
+                       │ • Quality Filter│
+                       └─────────────────┘
 ```
 
 ### 🗂️ Directory Structure
@@ -110,7 +127,8 @@ palestine-news-fact-checker/
 │   │   └── 📄 ClaimVerifier.js        # Individual claim verification
 │   ├── 📁 social-media/
 │   │   ├── 📄 SocialMediaPostGenerator.js  # Post content generation
-│   │   └── 📄 SocialMediaScraper.js        # Social media monitoring
+│   │   ├── 📄 SocialMediaScraper.js        # Social media monitoring
+│   │   └── 📄 TwitterAutoPoster.js         # Automated Twitter posting
 │   ├── 📁 sources/
 │   │   ├── 📄 sources.js              # Trusted source definitions
 │   │   └── 📄 rss-feeds.js            # RSS feed configurations
@@ -159,6 +177,18 @@ palestine-news-fact-checker/
    ```env
    # Required
    GEMINI_API_KEY=your_gemini_api_key_here
+   
+   # Twitter API Configuration (OAuth 1.0a - Required for posting)
+   TWITTER_API_KEY=your_twitter_api_key_here
+   TWITTER_API_SECRET=your_twitter_api_secret_here
+   TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
+   TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+   
+   # Auto-posting Configuration
+   AUTO_POST_ENABLED=true
+   MAX_POSTS_PER_DAY=5
+   CREDIBILITY_THRESHOLD=70
+   POSTING_HOURS=8,12,16,20
    
    # Optional
    PORT=3000
@@ -449,6 +479,224 @@ Cross-reference with trusted sources.
 Always check multiple sources.
 #FactCheck #VerifyNews
 ```
+
+## 🐦 Automated Twitter Posting
+
+### 🚀 Overview
+
+The Palestine News Fact-Checker includes a sophisticated Twitter automation system that intelligently selects and posts fact-checked Palestine news articles. The system operates with strict quality controls, rate limiting, and credibility thresholds to ensure only verified, high-quality content is shared.
+
+### ✨ Key Features
+
+#### 🤖 **Intelligent Auto-Posting**
+- **Automatic Queue Management**: Articles are automatically queued based on credibility scores
+- **Smart Scheduling**: Posts 4 times daily at optimal engagement times (8 AM, 12 PM, 4 PM, 8 PM)
+- **Priority Scoring**: Articles ranked by credibility, impact, and relevance
+- **Rate Limiting**: Maximum 5 posts per day to prevent spam
+- **Quality Threshold**: Only articles with ≥70% credibility score are posted
+
+#### 📊 **Queue Management System**
+- **Automatic Queuing**: High-credibility articles (70%+) are automatically added to the posting queue
+- **Priority Scoring**: Articles scored based on:
+  - Credibility percentage (40%)
+  - Source reputation (25%)
+  - Timeliness/breaking news factor (20%)
+  - Content impact/importance (15%)
+- **Duplicate Prevention**: Prevents posting similar content multiple times
+- **Manual Override**: API endpoints for manual queue management
+
+#### 📋 **Quality & Safety Controls**
+- **Credibility Filtering**: Only posts articles with credibility scores ≥70%
+- **Content Warnings**: Automatic misinformation warnings for lower-scored content
+- **Source Verification**: Cross-references multiple trusted sources
+- **Fact-Check Labels**: Clear labeling with credibility percentages
+- **Rate Limiting**: Respects Twitter API limits and best practices
+
+### ⚙️ Setup & Configuration
+
+#### 🔑 Twitter API Authentication
+
+The system requires Twitter API v1.1 OAuth 1.0a credentials for posting functionality:
+
+1. **Create Twitter Developer Account**
+   - Visit [Twitter Developer Portal](https://developer.twitter.com/en/portal/dashboard)
+   - Apply for developer access
+   - Create a new app project
+
+2. **Configure App Permissions**
+   ```
+   ⚠️ CRITICAL: Set app permissions to "Read and write"
+   ```
+   - Go to your app's Settings tab
+   - Click "User authentication settings"
+   - Set "App permissions" to "Read and write"
+   - Save changes
+
+3. **Generate Access Tokens**
+   - Navigate to "Keys and tokens" tab
+   - Generate "Access Token and Secret"
+   - ⚠️ **Important**: Regenerate tokens after changing permissions
+
+4. **Environment Configuration**
+   ```env
+   # Twitter OAuth 1.0a Credentials (Required for posting)
+   TWITTER_API_KEY=your_twitter_api_key_here
+   TWITTER_API_SECRET=your_twitter_api_secret_here
+   TWITTER_ACCESS_TOKEN=your_twitter_access_token_here
+   TWITTER_ACCESS_TOKEN_SECRET=your_twitter_access_token_secret_here
+   
+   # Auto-posting Configuration
+   AUTO_POST_ENABLED=true
+   MAX_POSTS_PER_DAY=5
+   CREDIBILITY_THRESHOLD=70
+   
+   # Posting Schedule (24-hour format)
+   POSTING_HOURS=8,12,16,20
+   ```
+
+#### 📅 **Scheduling Configuration**
+
+The system posts at configurable times throughout the day:
+
+```javascript
+// Default schedule (can be customized in .env)
+const defaultSchedule = [
+  { hour: 8, minute: 0 },   // 8:00 AM - Morning news
+  { hour: 12, minute: 0 },  // 12:00 PM - Midday updates  
+  { hour: 16, minute: 0 },  // 4:00 PM - Afternoon news
+  { hour: 20, minute: 0 }   // 8:00 PM - Evening summary
+];
+```
+
+### 📋 API Endpoints
+
+#### Twitter Queue Management
+
+| Method | Endpoint | Description | Parameters |
+|--------|----------|-------------|------------|
+| `GET` | `/api/twitter/queue` | Get current posting queue | `limit`, `minPriority` |
+| `GET` | `/api/twitter/status` | Get auto-poster status | - |
+| `POST` | `/api/twitter/post-now` | Post next queued article immediately | - |
+| `POST` | `/api/twitter/test-auth` | Test Twitter authentication | - |
+| `DELETE` | `/api/twitter/queue/:id` | Remove article from queue | `id` |
+
+#### Usage Examples
+
+**Check Queue Status**
+```bash
+curl http://localhost:3000/api/twitter/queue
+```
+
+**Test Authentication**
+```bash
+curl -X POST http://localhost:3000/api/twitter/test-auth
+```
+
+**Post Immediately**
+```bash
+curl -X POST http://localhost:3000/api/twitter/post-now
+```
+
+### 📊 **Monitoring & Analytics**
+
+#### Real-time Status Dashboard
+
+The web interface provides comprehensive monitoring:
+
+- **Queue Status**: Number of articles ready to post
+- **Authentication Status**: Twitter API connection health
+- **Posting History**: Recent tweets with engagement metrics
+- **Success/Error Rates**: System reliability statistics
+- **Next Scheduled Post**: Countdown to next automatic post
+
+#### Logging & Debugging
+
+The system provides detailed logging for monitoring:
+
+```javascript
+// Example log outputs
+[INFO] ✅ Twitter OAuth 1.0a authenticated as @mehdirben
+[INFO] 📤 Added to Twitter queue: "Article Title" (Priority: 78)
+[INFO] 🐦 Posted tweet ID: 1926401528451002438
+[INFO] 📅 Next scheduled post: 2024-01-15 16:00:00
+[ERROR] ❌ Tweet posting failed: Rate limit exceeded
+```
+
+### 🔧 **Troubleshooting**
+
+#### Common Authentication Issues
+
+**403 "Unsupported Authentication" Error**
+```bash
+# Issue: Using Bearer Token instead of OAuth 1.0a
+# Solution: Remove Bearer Token from .env, use only OAuth 1.0a credentials
+```
+
+**401 "Unauthorized" Error**
+```bash
+# Issue: App permissions set to "Read-only"
+# Solution: Change app permissions to "Read and write" and regenerate tokens
+```
+
+**Multiple Authentication Methods**
+```bash
+# Issue: Both OAuth 1.0a and OAuth 2.0 credentials in .env
+# Solution: Keep only OAuth 1.0a credentials for posting
+```
+
+#### Testing Authentication
+
+Use the diagnostic script to test your setup:
+
+```bash
+node test-twitter-auth.js
+```
+
+Expected output:
+```
+✅ Twitter OAuth 1.0a authenticated as @yourusername
+✅ Write permissions confirmed
+🐦 Ready for auto-posting!
+```
+
+### 📈 **Performance Metrics**
+
+The system tracks key performance indicators:
+
+#### Posting Metrics
+- **Posts per Day**: Average daily posting volume
+- **Success Rate**: Percentage of successful posts
+- **Queue Efficiency**: Average time from analysis to posting
+- **Engagement Tracking**: Retweets, likes, replies (if available)
+
+#### Quality Metrics  
+- **Average Credibility**: Mean credibility score of posted content
+- **Source Distribution**: Breakdown of content by news source
+- **Error Rates**: Failed posts, authentication issues, rate limits
+- **Queue Health**: Articles queued vs. posted ratios
+
+### 🎯 **Best Practices**
+
+#### Content Strategy
+- **Quality over Quantity**: Focus on high-credibility content (70%+)
+- **Diverse Sources**: Maintain balanced source representation
+- **Timely Posting**: Leverage breaking news for maximum impact
+- **Clear Labeling**: Always include credibility scores and fact-check labels
+
+#### Technical Guidelines
+- **Rate Limit Respect**: Never exceed Twitter's API limits
+- **Error Handling**: Implement robust retry mechanisms
+- **Authentication Security**: Regularly rotate API credentials
+- **Monitoring**: Continuously monitor system health and performance
+
+### 🔮 **Future Enhancements**
+
+#### Planned Features
+- **Multi-Account Support**: Post to multiple Twitter accounts
+- **Thread Generation**: Create Twitter threads for longer articles
+- **Image Generation**: AI-generated images for enhanced engagement
+- **Analytics Integration**: Deep integration with Twitter Analytics API
+- **Sentiment Analysis**: Real-time monitoring of audience response
 
 ## 🔍 Fact-Checking Process
 
