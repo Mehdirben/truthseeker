@@ -1968,17 +1968,69 @@
         </div>
 
         <!-- News Summary Section -->
-        <div class="card fade-in" style="margin-top: 1.5rem;">
-            <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-newspaper section-icon"></i> Recent Source Verification Summary</h2>
+        <div class="card fade-in" style="
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+            position: relative;
+        ">
+            <!-- Decorative Background Elements -->
+            <div style="
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+                border-radius: 50%;
+                z-index: 0;
+            "></div>
+            
+            <div class="card-header" style="
+                position: relative;
+                z-index: 1;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(16, 185, 129, 0.03) 100%);
+                border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            ">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="
+                        width: 50px;
+                        height: 50px;
+                        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                    ">
+                        <i class="fas fa-newspaper" style="color: white; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Recent Source Verification Summary</h2>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 1rem;">AI-verified news prioritizing Palestinian perspectives</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="position: relative; z-index: 1;">
                 <div id="newsSummaryContainer">
                     <div class="loading"><div class="spinner"></div> Loading summary...</div>
                 </div>
             </div>
-            <div class="card-footer card-footer-single">
-                <button class="btn btn-refresh" onclick="refreshSummary()">
+            <div class="card-footer card-footer-single" style="
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(16, 185, 129, 0.02) 100%);
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                z-index: 1;
+            ">
+                <button class="btn btn-refresh" onclick="refreshSummary()" style="
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+                    font-weight: 600;
+                ">
                     <i class="fas fa-sync-alt"></i> Refresh Summary
                 </button>
             </div>
