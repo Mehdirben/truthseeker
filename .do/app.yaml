@@ -1,0 +1,36 @@
+name: TruthSeeker
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: Mehdirben/truthseeker
+    branch: main
+    deploy_on_push: true
+  run_command: npm start
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 3000
+  health_check:
+    http_path: /
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: PORT
+    value: "3000"
+  - key: GEMINI_API_KEY
+    value: ${GEMINI_API_KEY}
+  - key: TWITTER_API_KEY
+    value: ${TWITTER_API_KEY}
+  - key: TWITTER_API_SECRET
+    value: ${TWITTER_API_SECRET}
+  - key: TWITTER_ACCESS_TOKEN
+    value: ${TWITTER_ACCESS_TOKEN}
+  - key: TWITTER_ACCESS_TOKEN_SECRET
+    value: ${TWITTER_ACCESS_TOKEN_SECRET}
+  - key: AUTO_POST_ENABLED
+    value: "true"
+  - key: MAX_POSTS_PER_DAY
+    value: "5"
+  - key: CREDIBILITY_THRESHOLD
+    value: "70" 
