@@ -946,6 +946,87 @@
             line-height: 1.6;
             margin-bottom: 0.75rem;
         }
+
+        /* Narrative Summary Styling */
+        .narrative-summary {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .narrative-content {
+            margin-top: 1rem;
+            line-height: 1.7;
+        }
+
+        .narrative-content p {
+            margin-bottom: 1rem;
+        }
+
+        .narrative-content strong {
+            color: var(--primary);
+        }
+
+        .top-sources {
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+        }
+
+        .top-sources h4 {
+            margin-bottom: 0.75rem;
+            color: var(--gray-700);
+            font-size: 1rem;
+        }
+
+        .source-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .source-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.35rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .main-concerns {
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: rgba(239, 68, 68, 0.05);
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--danger);
+        }
+
+        .main-concerns h4 {
+            margin-bottom: 0.75rem;
+            color: var(--danger);
+            font-size: 1rem;
+        }
+
+        .concerns-list {
+            margin-left: 1.25rem;
+            color: var(--gray-700);
+        }
+
+        .concerns-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
+            text-align: center;
+            color: var(--gray-500);
+        }
     </style>
 </head>
 <body>
@@ -965,7 +1046,7 @@
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-value" id="totalArticles">0</div>
-                            <div class="stat-label">Articles Scraped</div>
+                            <div class="stat-label">Total Analyzed</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="factChecked">0</div>
@@ -1007,7 +1088,7 @@
         <!-- News Summary Section -->
         <div class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-newspaper section-icon"></i> Latest News Summary</h2>
+                <h2 class="section-title"><i class="fas fa-newspaper section-icon"></i> Recent News Summary</h2>
             </div>
             <div class="card-body">
                 <div id="newsSummaryContainer">
@@ -1015,27 +1096,21 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn" onclick="refreshSummary()"><i class="fas fa-sync-alt"></i> Refresh</button>
-                <button class="btn btn-outline" onclick="showAllFactChecks()"><i class="fas fa-list"></i> View All</button>
+                <button class="btn" onclick="refreshSummary()"><i class="fas fa-sync-alt"></i> Refresh Summary</button>
             </div>
         </div>
 
-        <!-- Articles/Fact-Checks Section -->
+        <!-- Fact-Checked Articles Section -->
         <div class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
-                <div class="tabs">
-                    <div class="tab active" onclick="switchTab('news', this)">
-                        <i class="fas fa-newspaper"></i> Latest News
-                    </div>
-                    <div class="tab" onclick="switchTab('factcheck', this)">
-                        <i class="fas fa-check-circle"></i> Fact-Checks
-                    </div>
-                </div>
+                <h2 class="section-title"><i class="fas fa-check-circle section-icon"></i> Fact-Checked Articles</h2>
             </div>
             <div class="card-body">
-                <h2 id="currentViewTitle" class="section-title"></h2>
-                <div class="loading" id="loading" style="display: none;"><div class="spinner"></div> Loading articles...</div>
+                <div class="loading" id="loading" style="display: none;"><div class="spinner"></div> Loading fact-checks...</div>
                 <div id="articlesContainer"></div>
+            </div>
+            <div class="card-footer">
+                <button class="btn" onclick="refreshFactChecks()"><i class="fas fa-sync-alt"></i> Refresh Fact-Checks</button>
             </div>
         </div>
 
@@ -1125,7 +1200,6 @@
         function setupEventListeners() {
             document.getElementById('analyzeForm').addEventListener('submit', analyzeCustomArticle);
         }        async function loadInitialData() {
-            await refreshNews();
             await refreshFactChecks();
             await refreshSummary();
             updateDashboard();
@@ -1370,33 +1444,18 @@
         }
 
         async function refreshNews() {
-            showLoading(true);
-            try {
-                const response = await fetch('/api/news');
-                const data = await response.json();
-                
-                if (data.success) {
-                    articlesData = data.articles;
-                    if (currentView === 'news') {
-                        displayArticles(articlesData);
-                    }
-                    updateDashboard();
-                }
-            } catch (error) {
-                console.error('Error fetching news:', error);
-            } finally {
-                showLoading(false);
-            }
-        }        async function refreshFactChecks() {
+            // Redirect to refreshing fact checks since we removed news
+            await refreshFactChecks();
+        }
+
+        async function refreshFactChecks() {
             try {
                 const response = await fetch('/api/fact-check');
                 const data = await response.json();
                 
                 if (data.success) {
                     factCheckData = data.results;
-                    if (currentView === 'factcheck') {
-                        displayFactChecks(factCheckData);
-                    }
+                    displayFactChecks(factCheckData);
                     updateDashboard();
                     // Also refresh the social media article list
                     loadSocialReadyArticles();
@@ -1409,16 +1468,16 @@
         // News Summary Functions
         async function refreshSummary() {
             const container = document.getElementById('newsSummaryContainer');
-            container.innerHTML = '<div class="loading">Loading summary...</div>';
+            container.innerHTML = '<div class="loading"><div class="spinner"></div> Loading summary...</div>';
             
             try {
-                const response = await fetch('/api/news-summary?limit=5');
+                const response = await fetch('/api/fact-check');
                 const data = await response.json();
                 
-                if (data.success) {
-                    displayNewsSummary(data);
+                if (data.success && data.results && data.results.length > 0) {
+                    displayNewsSummary(data.results);
                 } else {
-                    container.innerHTML = '<div class="warning-text">Failed to load summary</div>';
+                    container.innerHTML = '<p>No recent news analysis available yet.</p>';
                 }
             } catch (error) {
                 console.error('Error fetching news summary:', error);
@@ -1426,295 +1485,180 @@
             }
         }
 
-        function displayNewsSummary(data) {
+        function displayNewsSummary(factCheckData) {
             const container = document.getElementById('newsSummaryContainer');
             
-            if (!data.latestArticles || data.latestArticles.length === 0) {
-                container.innerHTML = '<p>No fact-checked articles available yet.</p>';
+            if (!factCheckData || factCheckData.length === 0) {
+                container.innerHTML = '<p>No recent news analysis available yet.</p>';
                 return;
             }
+
+            // Get recent articles (last 24-48 hours)
+            const now = new Date();
+            const recentArticles = factCheckData.filter(article => {
+                const articleDate = new Date(article.processedAt);
+                const hoursDiff = (now - articleDate) / (1000 * 60 * 60);
+                return hoursDiff <= 48; // Last 48 hours
+            }).slice(0, 10);
+
+            // Calculate summary statistics
+            const totalAnalyzed = factCheckData.length;
+            const recentAnalyzed = recentArticles.length;
+            const verifiedCount = recentArticles.filter(a => 
+                (a.analysis.overallAssessment || '').toLowerCase().includes('verified') || 
+                (a.analysis.finalScore || a.analysis.credibilityScore || 0) >= 0.7
+            ).length;
+            const disputedCount = recentArticles.filter(a => 
+                (a.analysis.overallAssessment || '').toLowerCase().includes('disputed') ||
+                (a.analysis.redFlags && a.analysis.redFlags.length > 0)
+            ).length;
+            const avgCredibility = recentArticles.length > 0 
+                ? Math.round(recentArticles.reduce((sum, a) => sum + (a.analysis.finalScore || a.analysis.credibilityScore || 0), 0) / recentArticles.length * 100)
+                : 0;
+
+            // Generate narrative summary
+            let narrative = generateNarrativeSummary(recentArticles, verifiedCount, disputedCount, avgCredibility);
+
+            // Get top sources
+            const sources = {};
+            recentArticles.forEach(article => {
+                const source = article.source || 'Unknown';
+                sources[source] = (sources[source] || 0) + 1;
+            });
+            const topSources = Object.entries(sources)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([source]) => source);
+
+            // Get main topics/concerns
+            const allRedFlags = recentArticles
+                .filter(a => a.analysis.redFlags && a.analysis.redFlags.length > 0)
+                .flatMap(a => a.analysis.redFlags)
+                .slice(0, 5);
 
             let html = `
                 <div class="news-summary">
                     <div class="summary-stats">
                         <div class="summary-stat">
-                            <div class="summary-stat-number">${data.summary.totalAnalyzed}</div>
-                            <div class="summary-stat-label">Total Analyzed</div>
+                            <div class="summary-stat-number">${recentAnalyzed}</div>
+                            <div class="summary-stat-label">Recent Articles</div>
                         </div>
                         <div class="summary-stat">
-                            <div class="summary-stat-number">${data.summary.verifiedArticles}</div>
+                            <div class="summary-stat-number">${verifiedCount}</div>
                             <div class="summary-stat-label">Verified</div>
                         </div>
                         <div class="summary-stat">
-                            <div class="summary-stat-number">${data.summary.disputedArticles}</div>
+                            <div class="summary-stat-number">${disputedCount}</div>
                             <div class="summary-stat-label">Disputed</div>
                         </div>
                         <div class="summary-stat">
-                            <div class="summary-stat-number">${data.summary.averageCredibility}%</div>
+                            <div class="summary-stat-number">${avgCredibility}%</div>
                             <div class="summary-stat-label">Avg Credibility</div>
                         </div>
                     </div>
                     
-                    <h3>📊 Latest Fact-Checked Articles</h3>
-                    ${data.latestArticles.map(article => `
-                        <div class="summary-article">
-                            <div class="summary-title">${escapeHtml(article.title)}</div>
-                            <div class="summary-meta">
-                                <span class="summary-source">${escapeHtml(article.source)}</span>
-                                <span class="risk-badge risk-${article.summary.riskLevel.toLowerCase()}">
-                                    ${article.summary.riskLevel} RISK
-                                </span>
-                                <span class="credibility-badge credibility-${article.summary.credibilityLevel.toLowerCase()}">
-                                    ${article.summary.credibilityLevel} CREDIBILITY
-                                </span>
-                                <span class="verification-status ${article.overallAssessment.toLowerCase()}">
-                                    ${article.overallAssessment}
-                                </span>
-                            </div>
-                            
-                            <div class="summary-details">
-                                <div class="summary-verification">
-                                    ✓ ${article.summary.verificationStatus}
-                                </div>
-                                
-                                ${article.summary.mainConcerns && article.summary.mainConcerns.length > 0 ? `
-                                    <div class="summary-concerns">
-                                        ⚠️ Main concerns: ${article.summary.mainConcerns.join(', ')}
-                                    </div>
-                                ` : ''}
-                                
-                                <div style="margin-top: 8px;">
-                                    <span style="color: #666; font-size: 0.8rem;">
-                                        Analyzed: ${formatDate(article.processedAt)}
-                                    </span>
-                                    ${article.url ? `
-                                        <a href="${article.url}" target="_blank" class="expand-link">
-                                            📰 Read Original Article
-                                        </a>
-                                    ` : ''}
-                                </div>
-                            </div>
+                    <div class="narrative-summary">
+                        <h3><i class="fas fa-chart-line"></i> What's Happening</h3>
+                        <div class="narrative-content">
+                            ${narrative}
                         </div>
-                    `).join('')}
-                    
-                    ${data.hasMore ? `
-                        <div style="text-align: center; margin-top: 15px;">
-                            <button class="btn" onclick="showAllFactChecks()">
-                                📋 View All ${data.summary.totalAnalyzed} Fact-Checks
-                            </button>
+                    </div>
+
+                    ${topSources.length > 0 ? `
+                        <div class="top-sources">
+                            <h4><i class="fas fa-globe"></i> Top Sources</h4>
+                            <div class="source-tags">
+                                ${topSources.map(source => `
+                                    <span class="source-tag">${escapeHtml(source)}</span>
+                                `).join('')}
+                            </div>
                         </div>
                     ` : ''}
+
+                    ${allRedFlags.length > 0 ? `
+                        <div class="main-concerns">
+                            <h4><i class="fas fa-exclamation-triangle"></i> Main Concerns Identified</h4>
+                            <ul class="concerns-list">
+                                ${allRedFlags.map(flag => `
+                                    <li>${escapeHtml(flag)}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    <div class="summary-footer">
+                        <small><i class="fas fa-clock"></i> Last updated: ${new Date().toLocaleString()}</small>
+                    </div>
                 </div>
             `;
             
             container.innerHTML = html;
         }
 
-        function showAllFactChecks() {
-            // Switch to fact-check view
-            currentView = 'factcheck';
-            document.getElementById('currentViewTitle').textContent = '✅ All Fact-Check Results';
-            displayFactChecks(factCheckData);
-            
-            // Scroll to the articles section
-            document.getElementById('articlesContainer').scrollIntoView({ 
-                behavior: 'smooth' 
-            });
-        }
-
-        function displayArticles(articles) {
-            const container = document.getElementById('articlesContainer');
-            
-            if (!articles || articles.length === 0) {
-                container.innerHTML = '<p>No articles found. The scraper may still be collecting data.</p>';
-                return;
+        function generateNarrativeSummary(articles, verifiedCount, disputedCount, avgCredibility) {
+            if (articles.length === 0) {
+                return '<p>No recent news articles have been analyzed in the past 48 hours.</p>';
             }
 
-            container.innerHTML = articles.map(article => `
-                <div class="article">
-                    <div class="article-title">${escapeHtml(article.title)}</div>
-                    <div class="article-meta">
-                        <span class="article-source">${escapeHtml(article.source)}</span>
-                        <span>Published: ${formatDate(article.publishedDate)}</span>
-                        ${article.sourceCredibility ? `<span class="credibility-score ${getScoreClass(article.sourceCredibility)}">
-                            Credibility: ${Math.round(article.sourceCredibility * 100)}%
-                        </span>` : ''}
-                    </div>
-                    <div class="article-content">
-                        ${escapeHtml(article.content ? article.content.substring(0, 200) + '...' : 'Content not available')}
-                    </div>
-                    ${article.url ? `<p><a href="${article.url}" target="_blank">Read full article →</a></p>` : ''}
-                </div>
-            `).join('');
-        }
+            let summary = `<p>In the past 48 hours, our AI fact-checker has analyzed <strong>${articles.length} news articles</strong> about Palestine-related events. `;
 
-        function displayFactChecks(factChecks) {
-            const container = document.getElementById('articlesContainer');
-            
-            if (!factChecks || factChecks.length === 0) {
-                container.innerHTML = '<p>No fact-checks available yet. The AI is still processing articles.</p>';
-                return;
-            }
-
-            container.innerHTML = factChecks.map(item => `
-                <div class="article">
-                    <div class="article-title">${escapeHtml(item.title)}</div>
-                    <div class="article-meta">
-                        <span class="article-source">${escapeHtml(item.source)}</span>
-                        <span>Analyzed: ${formatDate(item.processedAt)}</span>
-                        <span class="credibility-score ${getScoreClass(item.analysis.finalScore || item.analysis.credibilityScore)}">
-                            Final Score: ${Math.round((item.analysis.finalScore || item.analysis.credibilityScore) * 100)}%
-                        </span>
-                    </div>
-                    
-                    <div class="analysis-summary">
-                        <p><strong>Assessment:</strong> 
-                            <span class="verification-status ${(item.analysis.overallAssessment || 'unverified').toLowerCase()}">
-                                ${item.analysis.overallAssessment || 'Unverified'}
-                            </span>
-                        </p>
-                        
-                        ${item.analysis.recommendations ? `
-                            <p><strong>Recommendation:</strong> ${escapeHtml(item.analysis.recommendations)}</p>
-                        ` : ''}
-                        
-                        ${item.analysis.keyFindings && item.analysis.keyFindings.length > 0 ? `
-                            <div class="key-findings">
-                                <strong>Key Findings:</strong>
-                                ${item.analysis.keyFindings.slice(0, 3).map(finding => `
-                                    <div class="finding">
-                                        <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}<br>
-                                        <strong>Status:</strong> <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
-                                            ${finding.verification || 'Unverified'}
-                                        </span><br>
-                                        <strong>Evidence:</strong> ${escapeHtml(finding.evidence || 'No evidence provided')}
-                                    </div>
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                        
-                        ${item.analysis.redFlags && item.analysis.redFlags.length > 0 ? `
-                            <p><strong>⚠️ Red Flags:</strong> ${item.analysis.redFlags.join(', ')}</p>
-                        ` : ''}
-                    </div>
-                    
-                    ${item.url ? `<p><a href="${item.url}" target="_blank">Read original article →</a></p>` : ''}
-                </div>
-            `).join('');
-        }
-
-        function toggleView() {
-            currentView = currentView === 'news' ? 'factcheck' : 'news';
-            
-            const title = document.getElementById('currentViewTitle');
-            if (currentView === 'news') {
-                title.textContent = '📰 Latest Palestine News';
-                displayArticles(articlesData);
+            if (avgCredibility >= 70) {
+                summary += `The overall credibility of reporting has been <strong>high</strong> (${avgCredibility}% average), indicating reliable news coverage.`;
+            } else if (avgCredibility >= 50) {
+                summary += `The overall credibility of reporting has been <strong>moderate</strong> (${avgCredibility}% average), with mixed reliability in sources.`;
             } else {
-                title.textContent = '✅ Fact-Check Results';
-                displayFactChecks(factCheckData);
+                summary += `The overall credibility of reporting has been <strong>concerning</strong> (${avgCredibility}% average), with several reliability issues identified.`;
             }
+            summary += '</p>';
+
+            if (verifiedCount > 0) {
+                summary += `<p><strong>${verifiedCount} articles</strong> have been verified as credible and well-sourced. `;
+            }
+
+            if (disputedCount > 0) {
+                summary += `<strong>${disputedCount} articles</strong> contain disputed claims or require additional verification. `;
+            }
+
+            if (disputedCount === 0 && verifiedCount === articles.length) {
+                summary += 'All recent articles have passed fact-checking verification.</p>';
+            } else if (disputedCount > verifiedCount) {
+                summary += `<strong>Exercise caution</strong> when sharing news from this period as ${Math.round((disputedCount/articles.length)*100)}% of articles contain questionable claims.</p>`;
+            } else {
+                summary += 'Most articles are credible, but always verify before sharing.</p>';
+            }
+
+            // Add trending topics if available
+            const topics = extractTopics(articles);
+            if (topics.length > 0) {
+                summary += `<p><strong>Trending topics:</strong> ${topics.join(', ')}.</p>`;
+            }
+
+            return summary;
         }
 
-        function updateDashboard() {
-            document.getElementById('totalArticles').textContent = articlesData.length;
-            document.getElementById('factChecked').textContent = factCheckData.length;
-            
-            if (factCheckData.length > 0) {
-                const avgScore = factCheckData.reduce((sum, item) => 
-                    sum + (item.analysis.finalScore || item.analysis.credibilityScore || 0), 0) / factCheckData.length;
-                document.getElementById('avgCredibility').textContent = Math.round(avgScore * 100) + '%';
-            }
-            
-            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-        }
-
-        async function analyzeCustomArticle(event) {
-            event.preventDefault();
-            
-            const url = document.getElementById('articleUrl').value;
-            const title = document.getElementById('articleTitle').value;
-            const content = document.getElementById('articleContent').value;
-            
-            if (!title || !content) {
-                alert('Please provide both title and content');
-                return;
-            }
-            
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '🔄 Analyzing...';
-            
-            try {
-                const response = await fetch('/api/analyze', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ url, title, content })
+        function extractTopics(articles) {
+            // Simple keyword extraction from titles
+            const keywords = {};
+            articles.forEach(article => {
+                const title = (article.title || '').toLowerCase();
+                const words = title.split(/\s+/).filter(word => 
+                    word.length > 4 && 
+                    !['about', 'israel', 'palestine', 'palestinian', 'news', 'report', 'says'].includes(word)
+                );
+                words.forEach(word => {
+                    keywords[word] = (keywords[word] || 0) + 1;
                 });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    displayCustomAnalysis(data.analysis);
-                } else {
-                    alert('Analysis failed: ' + data.error);
-                }
-            } catch (error) {
-                console.error('Error analyzing article:', error);
-                alert('Analysis failed. Please try again.');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '🔍 Analyze Article';
-            }
-        }
+            });
 
-        function displayCustomAnalysis(analysis) {
-            const container = document.getElementById('customAnalysisResult');
-            
-            container.innerHTML = `
-                <div class="analysis-summary" style="margin-top: 20px;">
-                    <h3>📊 Analysis Results</h3>
-                    <p><strong>Overall Assessment:</strong> 
-                        <span class="verification-status ${(analysis.overallAssessment || 'unverified').toLowerCase()}">
-                            ${analysis.overallAssessment || 'Unverified'}
-                        </span>
-                    </p>
-                    <p><strong>Credibility Score:</strong> 
-                        <span class="credibility-score ${getScoreClass(analysis.finalScore || analysis.credibilityScore)}">
-                            ${Math.round((analysis.finalScore || analysis.credibilityScore) * 100)}%
-                        </span>
-                    </p>
-                    
-                    ${analysis.recommendations ? `
-                        <p><strong>Recommendations:</strong> ${escapeHtml(analysis.recommendations)}</p>
-                    ` : ''}
-                    
-                    ${analysis.keyFindings && analysis.keyFindings.length > 0 ? `
-                        <div class="key-findings">
-                            <strong>Key Findings:</strong>
-                            ${analysis.keyFindings.map(finding => `
-                                <div class="finding">
-                                    <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}<br>
-                                    <strong>Status:</strong> <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
-                                        ${finding.verification || 'Unverified'}
-                                    </span><br>
-                                    <strong>Evidence:</strong> ${escapeHtml(finding.evidence || 'No evidence provided')}
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                    
-                    ${analysis.redFlags && analysis.redFlags.length > 0 ? `
-                        <p><strong>⚠️ Red Flags:</strong> ${analysis.redFlags.join(', ')}</p>
-                    ` : ''}
-                </div>
-            `;
+            return Object.entries(keywords)
+                .filter(([_, count]) => count >= 2)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([word]) => word);
         }
 
         function showLoading(show) {
-            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('loading').style.display = show ? 'flex' : 'none';
         }
 
         function getScoreClass(score) {
@@ -1758,7 +1702,7 @@
                 title.innerHTML = '<i class="fas fa-newspaper section-icon"></i> Latest Palestine News';
                 displayArticles(articlesData);
             } else if (tabName === 'factcheck') {
-                title.innerHTML = '<i class="fas fa-check-circle section-icon"></i> Fact-Check Results';
+                title.innerHTML = '✅ Fact-Check Results';
                 displayFactChecks(factCheckData);
             }
         }
@@ -2017,6 +1961,137 @@
             }
         `;
         document.head.appendChild(notificationStyles);
+
+        // Remove tab switching functions since we no longer need them
+        function toggleView() {
+            // Keep for backward compatibility but make it refresh fact checks
+            refreshFactChecks();
+        }
+
+        function updateDashboard() {
+            const totalFactChecked = factCheckData.length;
+            document.getElementById('totalArticles').textContent = totalFactChecked;
+            document.getElementById('factChecked').textContent = totalFactChecked;
+            
+            if (factCheckData.length > 0) {
+                const avgScore = factCheckData.reduce((sum, item) => 
+                    sum + (item.analysis.finalScore || item.analysis.credibilityScore || 0), 0) / factCheckData.length;
+                document.getElementById('avgCredibility').textContent = Math.round(avgScore * 100) + '%';
+            }
+            
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Keep the remaining functions
+        async function analyzeCustomArticle(event) {
+            event.preventDefault();
+            
+            const url = document.getElementById('articleUrl').value;
+            const title = document.getElementById('articleTitle').value;
+            const content = document.getElementById('articleContent').value;
+            
+            if (!title || !content) {
+                showNotification('Please provide both title and content', 'error');
+                return;
+            }
+            
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url, title, content })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayCustomAnalysis(data.analysis);
+                    showNotification('Article analysis completed successfully!', 'success');
+                } else {
+                    showNotification('Analysis failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                console.error('Error analyzing article:', error);
+                showNotification('Analysis failed. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function displayCustomAnalysis(analysis) {
+            const container = document.getElementById('customAnalysisResult');
+            
+            container.innerHTML = `
+                <div class="analysis-summary" style="margin-top: 20px;">
+                    <h3><i class="fas fa-chart-bar"></i> Analysis Results</h3>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <strong>Overall Assessment:</strong> 
+                        <span class="verification-status ${(analysis.overallAssessment || 'unverified').toLowerCase()}">
+                            ${analysis.overallAssessment || 'Unverified'}
+                        </span>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Credibility Score:</strong> 
+                        <span class="badge ${getCredibilityBadgeClass(analysis.finalScore || analysis.credibilityScore)}">
+                            ${Math.round((analysis.finalScore || analysis.credibilityScore) * 100)}%
+                        </span>
+                        <div class="credential-meter">
+                            <div class="credential-fill ${getCredentialClass(analysis.finalScore || analysis.credibilityScore)}" 
+                                 style="width: ${(analysis.finalScore || analysis.credibilityScore) * 100}%"></div>
+                        </div>
+                    </div>
+                    
+                    ${analysis.recommendations ? `
+                        <div style="margin-bottom: 1rem;">
+                            <strong><i class="fas fa-lightbulb"></i> Recommendations:</strong>
+                            <p style="margin-top: 0.5rem; color: var(--gray-600);">${escapeHtml(analysis.recommendations)}</p>
+                        </div>
+                    ` : ''}
+                    
+                    ${analysis.keyFindings && analysis.keyFindings.length > 0 ? `
+                        <div class="key-findings">
+                            <strong><i class="fas fa-search"></i> Key Findings:</strong>
+                            ${analysis.keyFindings.map(finding => `
+                                <div class="finding">
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}
+                                    </div>
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <strong>Status:</strong> 
+                                        <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
+                                            ${finding.verification || 'Unverified'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong>Evidence:</strong> ${escapeHtml(finding.evidence || 'No evidence provided')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${analysis.redFlags && analysis.redFlags.length > 0 ? `
+                        <div class="warning-box warning-high">
+                            <i class="fas fa-exclamation-triangle warning-icon"></i>
+                            <div>
+                                <strong>Red Flags:</strong>
+                                <ul style="margin-top: 0.5rem; margin-left: 1rem;">
+                                    ${analysis.redFlags.map(flag => `<li>${escapeHtml(flag)}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
