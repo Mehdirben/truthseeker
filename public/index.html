@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palestine News Fact-Checker AI Agent</title>
+    <title>Palestine News Source Comparison Tool</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1027,13 +1027,46 @@
             text-align: center;
             color: var(--gray-500);
         }
+
+        /* Trusted Sources Display */
+        .trusted-sources {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .trusted-sources .source-tag {
+            background: var(--info);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Methodology note styling */
+        .methodology-note {
+            background: var(--primary-light);
+            border: 1px solid var(--primary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .methodology-note p {
+            margin: 0;
+            color: var(--primary-dark);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1><i class="fas fa-balance-scale"></i> Palestine News Fact-Checker</h1>
-            <p>AI-Powered News Analysis with Reputable Source Verification</p>
+            <h1><i class="fas fa-balance-scale"></i> Palestine News Source Verification</h1>
+            <p>Cross-referencing news with trusted sources: Reuters, BBC, AP News, Al Jazeera, Palestinian outlets & verified regional sources</p>
         </header>
 
         <!-- Dashboard Overview -->
@@ -1088,7 +1121,7 @@
         <!-- News Summary Section -->
         <div class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-newspaper section-icon"></i> Recent News Summary</h2>
+                <h2 class="section-title"><i class="fas fa-newspaper section-icon"></i> Recent Source Verification Summary</h2>
             </div>
             <div class="card-body">
                 <div id="newsSummaryContainer">
@@ -1103,14 +1136,14 @@
         <!-- Fact-Checked Articles Section -->
         <div class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-check-circle section-icon"></i> Fact-Checked Articles</h2>
+                <h2 class="section-title"><i class="fas fa-check-circle section-icon"></i> Source-Verified Articles</h2>
             </div>
             <div class="card-body">
-                <div class="loading" id="loading" style="display: none;"><div class="spinner"></div> Loading fact-checks...</div>
+                <div class="loading" id="loading" style="display: none;"><div class="spinner"></div> Loading source comparisons...</div>
                 <div id="articlesContainer"></div>
             </div>
             <div class="card-footer">
-                <button class="btn" onclick="refreshFactChecks()"><i class="fas fa-sync-alt"></i> Refresh Fact-Checks</button>
+                <button class="btn" onclick="refreshFactChecks()"><i class="fas fa-sync-alt"></i> Refresh Comparisons</button>
             </div>
         </div>
 
@@ -1120,12 +1153,12 @@
                 <h2 class="section-title"><i class="fas fa-share-alt section-icon"></i> Generate Social Media Posts</h2>
             </div>
             <div class="card-body">
-                <p>Create engaging social media posts about fact-checked news articles</p>
+                <p>Create posts about news articles that have been verified against trusted sources</p>
                 
                 <div class="form-group">
-                    <label class="form-label" for="socialArticleSelect">Select Fact-Checked Article:</label>
+                    <label class="form-label" for="socialArticleSelect">Select Source-Verified Article:</label>
                     <select id="socialArticleSelect" class="form-control form-select">
-                        <option value="">Loading articles...</option>
+                        <option value="">Loading verified articles...</option>
                     </select>
                 </div>
                 
@@ -1161,9 +1194,16 @@
         <!-- Custom Article Analysis -->
         <div class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-search section-icon"></i> Analyze Custom Article</h2>
+                <h2 class="section-title"><i class="fas fa-search section-icon"></i> Compare Article with Trusted Sources</h2>
             </div>
             <div class="card-body">
+                <p>Submit an article to cross-reference with trusted news sources</p>
+                <div class="methodology-note">
+                    <p><strong><i class="fas fa-info-circle"></i> Our Methodology:</strong> 
+                    We prioritize including Palestinian sources and local perspectives alongside international outlets. 
+                    Many international sources lack crucial context that only Palestinian journalists and local sources can provide. 
+                    This tool aims to highlight these gaps and ensure comprehensive verification.</p>
+                </div>
                 <form id="analyzeForm">
                     <div class="form-group">
                         <label class="form-label" for="articleUrl">Article URL (optional):</label>
@@ -1182,7 +1222,7 @@
                 </form>
             </div>
             <div class="card-footer">
-                <button type="submit" form="analyzeForm" class="btn btn-secondary"><i class="fas fa-search"></i> Analyze Article</button>
+                <button type="submit" form="analyzeForm" class="btn btn-secondary"><i class="fas fa-search"></i> Compare with Trusted Sources</button>
             </div>
         </div>
     </div>
@@ -1600,38 +1640,35 @@
                 return '<p>No recent news articles have been analyzed in the past 48 hours.</p>';
             }
 
-            let summary = `<p>In the past 48 hours, our AI fact-checker has analyzed <strong>${articles.length} news articles</strong> about Palestine-related events. `;
+            let summary = `<p>In the past 48 hours, we have cross-referenced <strong>${articles.length} news articles</strong> with trusted sources including international outlets (Reuters, BBC, AP News), regional sources (Al Jazeera), Palestinian news outlets, and verified local sources to ensure comprehensive perspective. `;
 
             if (avgCredibility >= 70) {
-                summary += `The overall credibility of reporting has been <strong>high</strong> (${avgCredibility}% average), indicating reliable news coverage.`;
+                summary += `Most reporting shows consistency across diverse sources (${avgCredibility}% average match), indicating reliable information from multiple perspectives including Palestinian sources.`;
             } else if (avgCredibility >= 50) {
-                summary += `The overall credibility of reporting has been <strong>moderate</strong> (${avgCredibility}% average), with mixed reliability in sources.`;
+                summary += `There are discrepancies between different source perspectives (${avgCredibility}% average match), highlighting the importance of consulting Palestinian and regional sources alongside international outlets.`;
             } else {
-                summary += `The overall credibility of reporting has been <strong>concerning</strong> (${avgCredibility}% average), with several reliability issues identified.`;
+                summary += `Significant differences found across source perspectives (${avgCredibility}% average match), underscoring the critical need to include Palestinian voices and local sources in verification.`;
             }
             summary += '</p>';
 
             if (verifiedCount > 0) {
-                summary += `<p><strong>${verifiedCount} articles</strong> have been verified as credible and well-sourced. `;
+                summary += `<p><strong>${verifiedCount} articles</strong> show consistency across international, regional, and Palestinian sources. `;
             }
 
             if (disputedCount > 0) {
-                summary += `<strong>${disputedCount} articles</strong> contain disputed claims or require additional verification. `;
+                summary += `<strong>${disputedCount} articles</strong> show significant differences between international and Palestinian/regional source reporting. `;
             }
 
             if (disputedCount === 0 && verifiedCount === articles.length) {
-                summary += 'All recent articles have passed fact-checking verification.</p>';
+                summary += 'All recent articles show alignment across diverse source perspectives including Palestinian outlets.</p>';
             } else if (disputedCount > verifiedCount) {
-                summary += `<strong>Exercise caution</strong> when sharing news from this period as ${Math.round((disputedCount/articles.length)*100)}% of articles contain questionable claims.</p>`;
+                summary += `<strong>Exercise caution</strong> - ${Math.round((disputedCount/articles.length)*100)}% of articles show major discrepancies, often missing Palestinian perspectives or contradicting local sources.</p>`;
             } else {
-                summary += 'Most articles are credible, but always verify before sharing.</p>';
+                summary += 'Most information aligns across sources, but always consult Palestinian and regional outlets for complete context.</p>';
             }
 
-            // Add trending topics if available
-            const topics = extractTopics(articles);
-            if (topics.length > 0) {
-                summary += `<p><strong>Trending topics:</strong> ${topics.join(', ')}.</p>`;
-            }
+            // Add specific note about Palestinian source importance
+            summary += '<p><em>Note: This verification emphasizes the importance of including Palestinian sources and perspectives, as international coverage often lacks crucial local context and firsthand accounts.</em></p>';
 
             return summary;
         }
@@ -1786,8 +1823,8 @@
                 container.innerHTML = `
                     <div class="article-card">
                         <div class="article-header">
-                            <div class="article-title">No Fact-Checks Available</div>
-                            <p>The AI is still processing articles. Check back soon for analysis results.</p>
+                            <div class="article-title">No Source Comparisons Available</div>
+                            <p>No articles have been cross-referenced with trusted sources yet. Check back soon for verification results.</p>
                         </div>
                     </div>
                 `;
@@ -1806,7 +1843,7 @@
                                 <i class="fas fa-clock"></i> ${formatDate(item.processedAt)}
                             </span>
                             <span class="badge ${getCredibilityBadgeClass(item.analysis.finalScore || item.analysis.credibilityScore)}">
-                                <i class="fas fa-chart-line"></i> ${Math.round((item.analysis.finalScore || item.analysis.credibilityScore) * 100)}%
+                                <i class="fas fa-balance-scale"></i> ${Math.round((item.analysis.finalScore || item.analysis.credibilityScore) * 100)}% Match
                             </span>
                         </div>
                         <div class="credential-meter">
@@ -1818,35 +1855,44 @@
                     <div class="article-body">
                         <div class="analysis-summary">
                             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                                <strong>Assessment:</strong> 
+                                <strong><i class="fas fa-search"></i> Source Comparison Result:</strong> 
                                 <span class="verification-status ${(item.analysis.overallAssessment || 'unverified').toLowerCase()}">
-                                    ${item.analysis.overallAssessment || 'Unverified'}
+                                    ${getSourceComparisonStatus(item.analysis.overallAssessment)}
                                 </span>
                             </div>
                             
+                            ${item.analysis.trustedSources || item.analysis.sources ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <strong><i class="fas fa-shield-check"></i> Compared Against:</strong>
+                                    <div class="trusted-sources">
+                                        ${getTrustedSourcesList(item.analysis.trustedSources || item.analysis.sources)}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
                             ${item.analysis.recommendations ? `
                                 <div style="margin-bottom: 1rem;">
-                                    <strong><i class="fas fa-lightbulb"></i> Recommendation:</strong>
+                                    <strong><i class="fas fa-lightbulb"></i> Based on Source Comparison:</strong>
                                     <p style="margin-top: 0.5rem; color: var(--gray-600);">${escapeHtml(item.analysis.recommendations)}</p>
                                 </div>
                             ` : ''}
                             
                             ${item.analysis.keyFindings && item.analysis.keyFindings.length > 0 ? `
                                 <div class="key-findings">
-                                    <strong><i class="fas fa-search"></i> Key Findings:</strong>
+                                    <strong><i class="fas fa-balance-scale"></i> Source Comparison Findings:</strong>
                                     ${item.analysis.keyFindings.slice(0, 3).map(finding => `
                                         <div class="finding">
                                             <div style="margin-bottom: 0.5rem;">
                                                 <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}
                                             </div>
                                             <div style="margin-bottom: 0.5rem;">
-                                                <strong>Status:</strong> 
+                                                <strong>Trusted Source Status:</strong> 
                                                 <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
-                                                    ${finding.verification || 'Unverified'}
+                                                    ${getSourceVerificationText(finding.verification)}
                                                 </span>
                                             </div>
                                             <div>
-                                                <strong>Evidence:</strong> ${escapeHtml(finding.evidence || 'No evidence provided')}
+                                                <strong>Found in Trusted Sources:</strong> ${escapeHtml(finding.evidence || 'No matching information found in trusted sources')}
                                             </div>
                                         </div>
                                     `).join('')}
@@ -1857,7 +1903,7 @@
                                 <div class="warning-box warning-high">
                                     <i class="fas fa-exclamation-triangle warning-icon"></i>
                                     <div>
-                                        <strong>Red Flags:</strong>
+                                        <strong>Discrepancies with Trusted Sources:</strong>
                                         <ul style="margin-top: 0.5rem; margin-left: 1rem;">
                                             ${item.analysis.redFlags.map(flag => `<li>${escapeHtml(flag)}</li>`).join('')}
                                         </ul>
@@ -1868,7 +1914,7 @@
                     </div>
                     
                     <div class="article-footer">
-                        <span class="char-count">Processed ${formatDate(item.processedAt)}</span>
+                        <span class="char-count">Cross-referenced ${formatDate(item.processedAt)}</span>
                         ${item.url ? `
                             <a href="${item.url}" target="_blank" class="btn btn-outline">
                                 <i class="fas fa-external-link-alt"></i> Read Original
@@ -2091,6 +2137,36 @@
                     ` : ''}
                 </div>
             `;
+        }
+
+        // Helper functions for source comparison display
+        function getSourceComparisonStatus(assessment) {
+            if (!assessment) return 'Not Yet Compared';
+            if (assessment.toLowerCase().includes('verified')) return 'Matches Trusted Sources';
+            if (assessment.toLowerCase().includes('disputed')) return 'Contradicts Trusted Sources';
+            return assessment;
+        }
+
+        function getSourceVerificationText(verification) {
+            if (!verification) return 'Not found in trusted sources';
+            if (verification.toLowerCase().includes('verified')) return 'Confirmed by trusted sources';
+            if (verification.toLowerCase().includes('disputed')) return 'Contradicted by trusted sources';
+            return verification;
+        }
+
+        function getTrustedSourcesList(sources) {
+            if (!sources) return '<span class="source-tag">Reuters</span><span class="source-tag">BBC</span><span class="source-tag">AP News</span><span class="source-tag">Al Jazeera</span><span class="source-tag">Palestinian outlets</span>';
+            if (typeof sources === 'string') {
+                return sources.split(',').map(source => 
+                    `<span class="source-tag">${escapeHtml(source.trim())}</span>`
+                ).join('');
+            }
+            if (Array.isArray(sources)) {
+                return sources.map(source => 
+                    `<span class="source-tag">${escapeHtml(source)}</span>`
+                ).join('');
+            }
+            return '<span class="source-tag">Reuters</span><span class="source-tag">BBC</span><span class="source-tag">AP News</span><span class="source-tag">Al Jazeera</span>';
         }
     </script>
 </body>
