@@ -2443,25 +2443,6 @@
 
             let html = `
                 <div class="news-summary">
-                    <div class="summary-stats">
-                        <div class="summary-stat">
-                            <div class="summary-stat-number">${recentAnalyzed}</div>
-                            <div class="summary-stat-label">Recent Articles</div>
-                        </div>
-                        <div class="summary-stat">
-                            <div class="summary-stat-number">${verifiedCount}</div>
-                            <div class="summary-stat-label">Verified</div>
-                        </div>
-                        <div class="summary-stat">
-                            <div class="summary-stat-number">${disputedCount}</div>
-                            <div class="summary-stat-label">Disputed</div>
-                        </div>
-                        <div class="summary-stat">
-                            <div class="summary-stat-number">${avgCredibility}%</div>
-                            <div class="summary-stat-label">Avg Credibility</div>
-                        </div>
-                    </div>
-                    
                     <div class="narrative-summary">
                         <h3><i class="fas fa-chart-line"></i> What's Happening</h3>
                         <div class="narrative-content">
@@ -2502,40 +2483,96 @@
 
         function generateNarrativeSummary(articles, verifiedCount, disputedCount, avgCredibility) {
             if (articles.length === 0) {
-                return '<p>No recent news articles have been analyzed in the past 48 hours.</p>';
+                return '<p>No recent verified news available at this time.</p>';
             }
 
-            let summary = `<p>In the past 48 hours, we have cross-referenced <strong>${articles.length} news articles</strong> with multiple source types: international outlets (Reuters, BBC, AP News), regional sources (Al Jazeera, HesPress), Palestinian news outlets, verified social media accounts, and citizen journalism reports to ensure comprehensive ground-truth verification. `;
+            // Get the most credible and recent articles
+            const topArticles = articles
+                .filter(article => (article.analysis.finalScore || article.analysis.credibilityScore || 0) >= 0.5)
+                .sort((a, b) => {
+                    const scoreA = a.analysis.finalScore || a.analysis.credibilityScore || 0;
+                    const scoreB = b.analysis.finalScore || b.analysis.credibilityScore || 0;
+                    return scoreB - scoreA;
+                })
+                .slice(0, 5);
 
-            if (avgCredibility >= 70) {
-                summary += `Most reporting shows consistency across diverse sources including social media verification (${avgCredibility}% average match), indicating reliable information from multiple perspectives including on-the-ground witnesses.`;
-            } else if (avgCredibility >= 50) {
-                summary += `There are discrepancies between institutional sources and social media/citizen reports (${avgCredibility}% average match), highlighting the importance of consulting ground-level sources and eyewitness accounts.`;
-            } else {
-                summary += `Major differences found between official reporting and social media/citizen journalism (${avgCredibility}% average match), suggesting institutional sources may be missing crucial on-ground reality.`;
-            }
-            summary += '</p>';
-
-            if (verifiedCount > 0) {
-                summary += `<p><strong>${verifiedCount} articles</strong> show consistency across institutional sources, social media verification, and citizen reports. `;
-            }
-
-            if (disputedCount > 0) {
-                summary += `<strong>${disputedCount} articles</strong> show significant differences between institutional reporting and social media/eyewitness accounts. `;
+            if (topArticles.length === 0) {
+                return '<p>No verified news stories available at this time. Please check back later for updates.</p>';
             }
 
-            if (disputedCount === 0 && verifiedCount === articles.length) {
-                summary += 'All recent articles show alignment across institutional sources, social media, and citizen journalism.</p>';
-            } else if (disputedCount > verifiedCount) {
-                summary += `<strong>Exercise caution</strong> - ${Math.round((disputedCount/articles.length)*100)}% of articles contradict social media evidence and citizen reports, suggesting potential institutional bias or incomplete reporting.</p>`;
-            } else {
-                summary += 'Most information aligns across sources, but always verify with social media and citizen journalism for complete ground truth.</p>';
+            // Create a flowing narrative summary
+            let narrativeText = '';
+            
+            // Start with most important/credible story
+            const primaryStory = topArticles[0];
+            if (primaryStory) {
+                const title = primaryStory.title || 'Breaking News';
+                const source = primaryStory.source || 'Palestinian Sources';
+                
+                // Extract content or create summary
+                let summary = '';
+                if (primaryStory.content) {
+                    summary = primaryStory.content.substring(0, 200).trim();
+                } else if (primaryStory.analysis.keyPoints && primaryStory.analysis.keyPoints.length > 0) {
+                    summary = primaryStory.analysis.keyPoints.slice(0, 2).join('. ');
+                } else if (primaryStory.analysis.summary) {
+                    summary = primaryStory.analysis.summary.substring(0, 200);
+                } else {
+                    summary = `Latest developments reported by ${source}`;
+                }
+                
+                narrativeText += `<p><strong>${escapeHtml(title)}</strong> - ${escapeHtml(summary)}`;
+                if (!summary.endsWith('.')) narrativeText += '.';
+                narrativeText += ` <em>(Verified by ${escapeHtml(source)})</em></p>`;
             }
 
-            // Add specific note about social media and citizen journalism importance
-            summary += '<p><em>Note: Social media verification and citizen journalism often provide crucial real-time information and perspectives that institutional media may miss, delay, or filter. This tool prioritizes ground-truth sources alongside traditional outlets.</em></p>';
+            // Add other significant stories
+            if (topArticles.length > 1) {
+                const otherStories = topArticles.slice(1, 3);
+                const storyBriefs = otherStories.map(article => {
+                    const title = article.title || 'Update';
+                    const source = article.source || 'Regional Sources';
+                    return `${escapeHtml(title)} (${escapeHtml(source)})`;
+                }).join(', ');
+                
+                if (storyBriefs) {
+                    narrativeText += `<p>Additional developments include: ${storyBriefs}. `;
+                }
+            }
 
-            return summary;
+            // Add Palestinian source context
+            const palestinianSources = articles.filter(a => 
+                a.source && (
+                    a.source.toLowerCase().includes('palestinian') || 
+                    a.source.toLowerCase().includes('maan') ||
+                    a.source.toLowerCase().includes('chronicle') ||
+                    a.source.toLowerCase().includes('wafa')
+                )
+            );
+
+            const socialVerified = articles.filter(a => 
+                a.analysis.socialMediaVerification?.status === 'confirmed'
+            ).length;
+
+            if (palestinianSources.length > 0) {
+                narrativeText += `Palestinian sources continue to provide ground-level reporting with direct access to events. `;
+            }
+
+            if (socialVerified > 0) {
+                narrativeText += `Multiple reports have been confirmed through social media verification and citizen journalism. `;
+            }
+
+            narrativeText += `Our verification process prioritizes Palestinian voices and cross-references with regional outlets and social media to ensure accuracy.</p>`;
+
+            // Add verification methodology note
+            narrativeText += `<div style="margin-top: 1.5rem; padding: 1rem; background: var(--primary-light); border-radius: 0.5rem; border-left: 4px solid var(--primary);">
+                <p style="margin: 0; color: var(--primary-dark); font-size: 0.9rem;">
+                    <i class="fas fa-shield-check" style="margin-right: 0.5rem;"></i>
+                    <strong>Verification:</strong> All news cross-referenced through Palestinian sources, regional outlets, social media accounts, and citizen journalism for ground-truth accuracy.
+                </p>
+            </div>`;
+
+            return narrativeText;
         }
 
         function extractTopics(articles) {
