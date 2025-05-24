@@ -2223,204 +2223,206 @@
                 </div>
 
                 <!-- Enhanced Form Section -->
-                <div style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 1.5rem;
-                    margin-bottom: 2rem;
-                ">
-                    <!-- Article Selection -->
-                    <div class="form-group" style="
-                        background: white;
-                        padding: 1.25rem;
-                        border-radius: 0.75rem;
-                        border: 1px solid rgba(139, 92, 246, 0.1);
-                        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
+                <form id="analyzeForm" action="#" method="post">
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 1.5rem;
+                        margin-bottom: 2rem;
                     ">
-                        <label class="form-label" for="socialArticleSelect" style="
-                            display: flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            font-weight: 600;
-                            color: var(--tertiary);
-                            margin-bottom: 0.75rem;
+                        <!-- Article Selection -->
+                        <div class="form-group" style="
+                            background: white;
+                            padding: 1.25rem;
+                            border-radius: 0.75rem;
+                            border: 1px solid rgba(139, 92, 246, 0.1);
+                            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
                         ">
-                            <i class="fas fa-newspaper"></i>
-                            Select Source-Verified Article:
-                        </label>
-                        <select id="socialArticleSelect" class="form-control form-select" style="
-                            border: 2px solid rgba(139, 92, 246, 0.2);
-                            border-radius: 0.5rem;
-                            padding: 0.75rem;
-                            font-size: 0.95rem;
-                            transition: all 0.2s ease;
+                            <label class="form-label" for="socialArticleSelect" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                font-weight: 600;
+                                color: var(--tertiary);
+                                margin-bottom: 0.75rem;
+                            ">
+                                <i class="fas fa-newspaper"></i>
+                                Select Source-Verified Article:
+                            </label>
+                            <select id="socialArticleSelect" class="form-control form-select" style="
+                                border: 2px solid rgba(139, 92, 246, 0.2);
+                                border-radius: 0.5rem;
+                                padding: 0.75rem;
+                                font-size: 0.95rem;
+                                transition: all 0.2s ease;
+                            ">
+                                <option value="">Loading verified articles...</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Platform Selection -->
+                        <div class="form-group" style="
+                            background: white;
+                            padding: 1.25rem;
+                            border-radius: 0.75rem;
+                            border: 1px solid rgba(0, 115, 47, 0.1);
+                            box-shadow: 0 2px 8px rgba(0, 115, 47, 0.05);
                         ">
-                            <option value="">Loading verified articles...</option>
-                        </select>
+                            <label class="form-label" for="platformSelect" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                font-weight: 600;
+                                color: var(--secondary);
+                                margin-bottom: 0.75rem;
+                            ">
+                                <i class="fas fa-globe"></i>
+                                Platform:
+                            </label>
+                            <select id="platformSelect" class="form-control form-select" style="
+                                border: 2px solid rgba(0, 115, 47, 0.2);
+                                border-radius: 0.5rem;
+                                padding: 0.75rem;
+                                font-size: 0.95rem;
+                                transition: all 0.2s ease;
+                            ">
+                                <option value="twitter">🐦 Twitter</option>
+                                <option value="facebook">📘 Facebook</option>
+                                <option value="instagram">📷 Instagram</option>
+                                <option value="linkedin">💼 LinkedIn</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Tone Selection -->
+                        <div class="form-group" style="
+                            background: white;
+                            padding: 1.25rem;
+                            border-radius: 0.75rem;
+                            border: 1px solid rgba(200, 16, 46, 0.1);
+                            box-shadow: 0 2px 8px rgba(200, 16, 46, 0.05);
+                        ">
+                            <label class="form-label" for="toneSelect" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                font-weight: 600;
+                                color: var(--primary);
+                                margin-bottom: 0.75rem;
+                            ">
+                                <i class="fas fa-palette"></i>
+                                Tone:
+                            </label>
+                            <select id="toneSelect" class="form-control form-select" style="
+                                border: 2px solid rgba(200, 16, 46, 0.2);
+                                border-radius: 0.5rem;
+                                padding: 0.75rem;
+                                font-size: 0.95rem;
+                                transition: all 0.2s ease;
+                            ">
+                                <option value="informative">📊 Informative</option>
+                                <option value="engaging">🎯 Engaging</option>
+                                <option value="urgent">⚡ Urgent</option>
+                                <option value="professional">👔 Professional</option>
+                            </select>
+                        </div>
                     </div>
                     
-                    <!-- Platform Selection -->
-                    <div class="form-group" style="
-                        background: white;
-                        padding: 1.25rem;
-                        border-radius: 0.75rem;
-                        border: 1px solid rgba(0, 115, 47, 0.1);
-                        box-shadow: 0 2px 8px rgba(0, 115, 47, 0.05);
-                    ">
-                        <label class="form-label" for="platformSelect" style="
-                            display: flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            font-weight: 600;
-                            color: var(--secondary);
-                            margin-bottom: 0.75rem;
-                        ">
-                            <i class="fas fa-globe"></i>
-                            Platform:
-                        </label>
-                        <select id="platformSelect" class="form-control form-select" style="
-                            border: 2px solid rgba(0, 115, 47, 0.2);
-                            border-radius: 0.5rem;
-                            padding: 0.75rem;
-                            font-size: 0.95rem;
-                            transition: all 0.2s ease;
-                        ">
-                            <option value="twitter">🐦 Twitter</option>
-                            <option value="facebook">📘 Facebook</option>
-                            <option value="instagram">📷 Instagram</option>
-                            <option value="linkedin">💼 LinkedIn</option>
-                        </select>
-                    </div>
+                    <!-- Results Section -->
+                    <div id="socialPostResult" style="position: relative; z-index: 1;"></div>
                     
-                    <!-- Tone Selection -->
-                    <div class="form-group" style="
-                        background: white;
-                        padding: 1.25rem;
-                        border-radius: 0.75rem;
+                    <!-- Features Highlight -->
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                        gap: 1rem;
+                        margin-top: 2rem;
+                        padding: 1.5rem;
+                        background: linear-gradient(135deg, rgba(200, 16, 46, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+                        border-radius: 1rem;
                         border: 1px solid rgba(200, 16, 46, 0.1);
-                        box-shadow: 0 2px 8px rgba(200, 16, 46, 0.05);
                     ">
-                        <label class="form-label" for="toneSelect" style="
-                            display: flex;
-                            align-items: center;
-                            gap: 0.5rem;
-                            font-weight: 600;
-                            color: var(--primary);
-                            margin-bottom: 0.75rem;
-                        ">
-                            <i class="fas fa-palette"></i>
-                            Tone:
-                        </label>
-                        <select id="toneSelect" class="form-control form-select" style="
-                            border: 2px solid rgba(200, 16, 46, 0.2);
-                            border-radius: 0.5rem;
-                            padding: 0.75rem;
-                            font-size: 0.95rem;
-                            transition: all 0.2s ease;
-                        ">
-                            <option value="informative">📊 Informative</option>
-                            <option value="engaging">🎯 Engaging</option>
-                            <option value="urgent">⚡ Urgent</option>
-                            <option value="professional">👔 Professional</option>
-                        </select>
+                        <div style="text-align: center;">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 0.75rem auto;
+                                box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
+                            ">
+                                <i class="fas fa-shield-check" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Fact-Check Integration</h4>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Built-in verification warnings</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 0.75rem auto;
+                                box-shadow: 0 4px 12px rgba(0, 115, 47, 0.3);
+                            ">
+                                <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Multi-Platform</h4>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Optimized for each platform</p>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin: 0 auto 0.75rem auto;
+                                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                            ">
+                                <i class="fas fa-brain" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">AI-Powered</h4>
+                            <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Intelligent content generation</p>
+                        </div>
                     </div>
-                </div>
+                </form>
                 
-                <!-- Results Section -->
-                <div id="socialPostResult" style="position: relative; z-index: 1;"></div>
-                
-                <!-- Features Highlight -->
-                <div style="
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                    gap: 1rem;
-                    margin-top: 2rem;
-                    padding: 1.5rem;
-                    background: linear-gradient(135deg, rgba(200, 16, 46, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-                    border-radius: 1rem;
-                    border: 1px solid rgba(200, 16, 46, 0.1);
+                <div class="card-footer card-footer-grouped" style="
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(0, 115, 47, 0.02) 100%);
+                    height: 80px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative;
+                    z-index: 1;
+                    border-top: 1px solid rgba(139, 92, 246, 0.1);
                 ">
-                    <div style="text-align: center;">
-                        <div style="
-                            width: 50px;
-                            height: 50px;
-                            background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            margin: 0 auto 0.75rem auto;
-                            box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
-                        ">
-                            <i class="fas fa-shield-check" style="color: white; font-size: 1.25rem;"></i>
-                        </div>
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Fact-Check Integration</h4>
-                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Built-in verification warnings</p>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div style="
-                            width: 50px;
-                            height: 50px;
+                    <div class="btn-group btn-group-primary">
+                        <button class="btn btn-generate" onclick="generateSinglePost()" style="
                             background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            margin: 0 auto 0.75rem auto;
-                            box-shadow: 0 4px 12px rgba(0, 115, 47, 0.3);
+                            box-shadow: 0 6px 20px rgba(0, 115, 47, 0.3);
+                            font-weight: 600;
                         ">
-                            <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
-                        </div>
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Multi-Platform</h4>
-                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Optimized for each platform</p>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <div style="
-                            width: 50px;
-                            height: 50px;
+                            <i class="fas fa-comment"></i> Generate Single Post
+                        </button>
+                        <button class="btn btn-secondary" onclick="generateMultiplePosts()" style="
                             background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
-                            border-radius: 50%;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            margin: 0 auto 0.75rem auto;
-                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+                            font-weight: 600;
                         ">
-                            <i class="fas fa-brain" style="color: white; font-size: 1.25rem;"></i>
-                        </div>
-                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">AI-Powered</h4>
-                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Intelligent content generation</p>
+                            <i class="fas fa-comments"></i> Generate All Platforms
+                        </button>
                     </div>
-                </div>
-            </div>
-            
-            <div class="card-footer card-footer-grouped" style="
-                background: linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(0, 115, 47, 0.02) 100%);
-                height: 80px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: relative;
-                z-index: 1;
-                border-top: 1px solid rgba(139, 92, 246, 0.1);
-            ">
-                <div class="btn-group btn-group-primary">
-                    <button class="btn btn-generate" onclick="generateSinglePost()" style="
-                        background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
-                        box-shadow: 0 6px 20px rgba(0, 115, 47, 0.3);
-                        font-weight: 600;
-                    ">
-                        <i class="fas fa-comment"></i> Generate Single Post
-                    </button>
-                    <button class="btn btn-secondary" onclick="generateMultiplePosts()" style="
-                        background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
-                        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
-                        font-weight: 600;
-                    ">
-                        <i class="fas fa-comments"></i> Generate All Platforms
-                    </button>
                 </div>
             </div>
         </div>
@@ -2571,7 +2573,7 @@
                 </div>
 
                 <!-- Enhanced Form Section -->
-                <form id="analyzeForm">
+                <form id="analyzeForm" action="#" method="post">
                     <div style="
                         display: grid;
                         gap: 2rem;
@@ -2792,7 +2794,26 @@
         });
 
         function setupEventListeners() {
-            document.getElementById('analyzeForm').addEventListener('submit', analyzeCustomArticle);
+            console.log('Setting up event listeners...'); // Debug log
+            const form = document.getElementById('analyzeForm');
+            if (form) {
+                console.log('Found analyzeForm, attaching event listener'); // Debug log
+                form.addEventListener('submit', analyzeCustomArticle);
+            } else {
+                console.error('analyzeForm not found!'); // Debug log
+            }
+            
+            // Also add a direct click listener to the button as backup
+            const submitBtn = document.querySelector('button[form="analyzeForm"]');
+            if (submitBtn) {
+                console.log('Found submit button, adding backup click listener');
+                submitBtn.addEventListener('click', function(e) {
+                    console.log('Submit button clicked directly!');
+                    // Let the form handle it normally, but log the click
+                });
+            } else {
+                console.error('Submit button not found!');
+            }
         }        async function loadInitialData() {
             await refreshFactChecks();
             await refreshSummary();
@@ -3654,10 +3675,13 @@
 
         // Keep the remaining functions
         async function analyzeCustomArticle(event) {
+            console.log('analyzeCustomArticle called!', event); // Debug log
             event.preventDefault();
             
             const url = document.getElementById('articleUrl').value.trim();
             const content = document.getElementById('articleContent').value.trim();
+            
+            console.log('URL:', url, 'Content length:', content.length); // Debug log
             
             // Require at least one field (URL or content)
             if (!url && !content) {
@@ -3665,10 +3689,19 @@
                 return;
             }
             
-            const submitBtn = event.target.querySelector('button[type="submit"]');
+            // Find the submit button by its form attribute since it's outside the form
+            const submitBtn = document.querySelector('button[form="analyzeForm"]');
+            if (!submitBtn) {
+                console.error('Submit button not found!');
+                showNotification('Interface error: Submit button not found', 'error');
+                return;
+            }
+            
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+            
+            console.log('Sending request to /api/analyze...'); // Debug log
             
             try {
                 const response = await fetch('/api/analyze', {
@@ -3683,7 +3716,9 @@
                     })
                 });
                 
+                console.log('Response status:', response.status); // Debug log
                 const data = await response.json();
+                console.log('Response data:', data); // Debug log
                 
                 if (data.success) {
                     displayCustomAnalysis(data.analysis);
