@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import { NewsScraper } from './scrapers/NewsScraper.js';
 import { FactChecker } from './fact-checker/FactChecker.js';
 import { SocialMediaPostGenerator } from './social-media/SocialMediaPostGenerator.js';
+import { TwitterAutoPoster } from './social-media/TwitterAutoPoster.js';
 import { logger } from './utils/logger.js';
 import { config } from './config/config.js';
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 const newsScraper = new NewsScraper();
 const factChecker = new FactChecker();
 const socialMediaGenerator = new SocialMediaPostGenerator();
+const twitterAutoPoster = new TwitterAutoPoster();
 
 // Store for processed articles
 let processedArticles = [];
@@ -312,6 +314,91 @@ app.get('/api/news-summary', (req, res) => {
     }
 });
 
+// Twitter Auto-Posting API endpoints
+app.get('/api/twitter/status', (req, res) => {
+    try {
+        const status = twitterAutoPoster.getQueueStatus();
+        const isConfigured = twitterAutoPoster.isConfigured();
+        
+        res.json({
+            success: true,
+            configured: isConfigured,
+            ...status
+        });
+    } catch (error) {
+        logger.error('Error getting Twitter status:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get Twitter status'
+        });
+    }
+});
+
+app.post('/api/twitter/post-immediate', async (req, res) => {
+    try {
+        const { articleId } = req.body;
+        
+        if (!articleId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Article ID is required'
+            });
+        }
+
+        // Find the article in fact check results
+        const result = factCheckResults.find(r => 
+            r.url === articleId || 
+            r.articleUrl === articleId ||
+            factCheckResults.indexOf(r).toString() === articleId
+        );
+        
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                error: 'Article not found in fact-check results'
+            });
+        }
+
+        const article = {
+            title: result.articleTitle || result.title,
+            source: result.articleSource || result.source,
+            url: result.articleUrl || result.url,
+            publishedDate: result.publishedAt
+        };
+
+        const postResult = await twitterAutoPoster.postImmediate(article, result.analysis || result);
+        
+        res.json({
+            success: true,
+            ...postResult
+        });
+
+    } catch (error) {
+        logger.error('Error posting immediate tweet:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+app.post('/api/twitter/clear-queue', async (req, res) => {
+    try {
+        await twitterAutoPoster.clearQueue();
+        
+        res.json({
+            success: true,
+            message: 'Twitter post queue cleared'
+        });
+    } catch (error) {
+        logger.error('Error clearing Twitter queue:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to clear Twitter queue'
+        });
+    }
+});
+
 // Background job to collect and analyze news
 async function runFactCheckCycle() {
     try {
@@ -329,6 +416,7 @@ async function runFactCheckCycle() {
         // Process each article (limit to maxArticlesPerCycle)
         const articlesToProcess = articles.slice(0, config.factCheck.maxArticlesPerCycle);
         let processedCount = 0;
+        let addedToTwitterQueue = 0;
         
         for (const article of articlesToProcess) {
             try {
@@ -350,6 +438,14 @@ async function runFactCheckCycle() {
                     processedArticles.push(article);
                     processedCount++;
                     
+                    // Add to Twitter queue if meets criteria and auto-posting is enabled
+                    if (process.env.AUTO_POST_ENABLED === 'true' && twitterAutoPoster.isConfigured()) {
+                        const added = await twitterAutoPoster.addToQueue(article, analysis);
+                        if (added) {
+                            addedToTwitterQueue++;
+                        }
+                    }
+                    
                     logger.info(`✅ Analyzed (${processedCount}/${articlesToProcess.length}): ${article.title.substring(0, 80)}...`);
                     
                     // Rate limiting - wait between requests
@@ -370,6 +466,10 @@ async function runFactCheckCycle() {
         
         logger.info(`✅ Fact-check cycle completed. Processed ${processedCount} new articles.`);
         logger.info(`📊 Total in database: ${factCheckResults.length} fact-checked articles`);
+        
+        if (addedToTwitterQueue > 0) {
+            logger.info(`📤 Added ${addedToTwitterQueue} articles to Twitter posting queue`);
+        }
         
     } catch (error) {
         logger.error('Error in fact-check cycle:', error);
