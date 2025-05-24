@@ -1,0 +1,154 @@
+import express from 'express';
+import dotenv from 'dotenv';
+import cron from 'node-cron';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import { NewsScraper } from './scrapers/NewsScraper.js';
+import { FactChecker } from './fact-checker/FactChecker.js';
+import { logger } from './utils/logger.js';
+
+// Load environment variables
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Initialize services
+const newsScraper = new NewsScraper();
+const factChecker = new FactChecker();
+
+// Store for processed articles
+let processedArticles = [];
+let factCheckResults = [];
+
+// Routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+app.get('/api/news', async (req, res) => {
+    try {
+        const articles = await newsScraper.getLatestNews();
+        res.json({
+            success: true,
+            count: articles.length,
+            articles: articles
+        });
+    } catch (error) {
+        logger.error('Error fetching news:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch news articles'
+        });
+    }
+});
+
+app.get('/api/fact-check', (req, res) => {
+    res.json({
+        success: true,
+        count: factCheckResults.length,
+        results: factCheckResults.slice(-20) // Return last 20 results
+    });
+});
+
+app.post('/api/analyze', async (req, res) => {
+    try {
+        const { url, title, content } = req.body;
+        
+        if (!content && !url) {
+            return res.status(400).json({
+                success: false,
+                error: 'Either content or URL is required'
+            });
+        }
+
+        const article = { url, title, content };
+        const analysis = await factChecker.analyzeArticle(article);
+        
+        res.json({
+            success: true,
+            analysis: analysis
+        });
+    } catch (error) {
+        logger.error('Error analyzing article:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to analyze article'
+        });
+    }
+});
+
+// Background job to collect and analyze news
+async function runFactCheckCycle() {
+    try {
+        logger.info('Starting fact-check cycle...');
+        
+        // Scrape latest news
+        const articles = await newsScraper.getLatestNews();
+        logger.info(`Scraped ${articles.length} articles`);
+        
+        // Process each article
+        for (const article of articles) {
+            try {
+                // Check if already processed
+                const alreadyProcessed = processedArticles.some(
+                    processed => processed.url === article.url
+                );
+                
+                if (!alreadyProcessed) {
+                    const analysis = await factChecker.analyzeArticle(article);
+                    
+                    factCheckResults.push({
+                        ...article,
+                        analysis,
+                        processedAt: new Date().toISOString()
+                    });
+                    
+                    processedArticles.push(article);
+                    
+                    logger.info(`Analyzed: ${article.title}`);
+                    
+                    // Rate limiting - wait between requests
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+            } catch (error) {
+                logger.error(`Error processing article: ${article.title}`, error);
+            }
+        }
+        
+        // Keep only recent results (last 100)
+        if (factCheckResults.length > 100) {
+            factCheckResults = factCheckResults.slice(-100);
+        }
+        if (processedArticles.length > 200) {
+            processedArticles = processedArticles.slice(-200);
+        }
+        
+        logger.info('Fact-check cycle completed');
+    } catch (error) {
+        logger.error('Error in fact-check cycle:', error);
+    }
+}
+
+// Schedule fact-checking every 6 hours
+const scheduleInterval = process.env.FACT_CHECK_INTERVAL_HOURS || 6;
+cron.schedule(`0 */${scheduleInterval} * * *`, runFactCheckCycle);
+
+// Start server
+app.listen(PORT, () => {
+    logger.info(`Palestine News Fact-Checker Agent running on port ${PORT}`);
+    logger.info(`Scheduled fact-checking every ${scheduleInterval} hours`);
+    
+    // Run initial fact-check cycle
+    setTimeout(runFactCheckCycle, 5000);
+});
+
+export default app;
