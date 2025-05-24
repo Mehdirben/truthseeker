@@ -21,8 +21,21 @@ export const config = {
     },
     
     factCheck: {
-        intervalHours: parseInt(process.env.FACT_CHECK_INTERVAL_HOURS) || 6,
-        maxArticlesPerCycle: 20,
-        credibilityThreshold: 0.7
+        intervalHours: parseInt(process.env.FACT_CHECK_INTERVAL_HOURS) || 2,
+        maxArticlesPerCycle: parseInt(process.env.MAX_ARTICLES_PER_CYCLE) || 30,
+        credibilityThreshold: parseFloat(process.env.CREDIBILITY_THRESHOLD) || 0.7,
+        maxRecentHours: 72,
+        prioritySourcesFirst: true
+    },
+
+    // Social media configuration
+    socialMedia: {
+        autoPost: {
+            enabled: process.env.AUTO_POST_ENABLED === 'true',
+            platforms: (process.env.AUTO_POST_PLATFORMS || 'twitter').split(','),
+            minCredibilityScore: parseFloat(process.env.AUTO_POST_MIN_CREDIBILITY) || 0.7,
+            maxPostsPerDay: parseInt(process.env.AUTO_POST_MAX_PER_DAY) || 5,
+            intervalHours: parseInt(process.env.AUTO_POST_INTERVAL_HOURS) || 2
+        }
     }
 };

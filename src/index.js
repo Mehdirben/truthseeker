@@ -1,13 +1,15 @@
 import express from 'express';
-import dotenv from 'dotenv';
-import cron from 'node-cron';
+import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import cron from 'node-cron';
+import dotenv from 'dotenv';
 
 import { NewsScraper } from './scrapers/NewsScraper.js';
 import { FactChecker } from './fact-checker/FactChecker.js';
 import { SocialMediaPostGenerator } from './social-media/SocialMediaPostGenerator.js';
 import { logger } from './utils/logger.js';
+import { config } from './config/config.js';
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +21,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
@@ -312,14 +315,22 @@ app.get('/api/news-summary', (req, res) => {
 // Background job to collect and analyze news
 async function runFactCheckCycle() {
     try {
-        logger.info('Starting fact-check cycle...');
+        logger.info('Starting fact-check cycle for latest Palestine news...');
         
-        // Scrape latest news
+        // Scrape latest news with improved filtering
         const articles = await newsScraper.getLatestNews();
-        logger.info(`Scraped ${articles.length} articles`);
+        logger.info(`Scraped ${articles.length} recent Palestine articles`);
         
-        // Process each article
-        for (const article of articles) {
+        if (articles.length === 0) {
+            logger.warn('No recent Palestine articles found. Check RSS feeds and sources.');
+            return;
+        }
+
+        // Process each article (limit to maxArticlesPerCycle)
+        const articlesToProcess = articles.slice(0, config.factCheck.maxArticlesPerCycle);
+        let processedCount = 0;
+        
+        for (const article of articlesToProcess) {
             try {
                 // Check if already processed
                 const alreadyProcessed = processedArticles.some(
@@ -327,6 +338,7 @@ async function runFactCheckCycle() {
                 );
                 
                 if (!alreadyProcessed) {
+                    logger.info(`Analyzing: "${article.title}" from ${article.source}`);
                     const analysis = await factChecker.analyzeArticle(article);
                     
                     factCheckResults.push({
@@ -336,18 +348,19 @@ async function runFactCheckCycle() {
                     });
                     
                     processedArticles.push(article);
+                    processedCount++;
                     
-                    logger.info(`Analyzed: ${article.title}`);
+                    logger.info(`✅ Analyzed (${processedCount}/${articlesToProcess.length}): ${article.title.substring(0, 80)}...`);
                     
                     // Rate limiting - wait between requests
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await new Promise(resolve => setTimeout(resolve, config.rateLimiting.geminiDelay));
                 }
             } catch (error) {
                 logger.error(`Error processing article: ${article.title}`, error);
             }
         }
         
-        // Keep only recent results (last 100)
+        // Keep only recent results
         if (factCheckResults.length > 100) {
             factCheckResults = factCheckResults.slice(-100);
         }
@@ -355,23 +368,51 @@ async function runFactCheckCycle() {
             processedArticles = processedArticles.slice(-200);
         }
         
-        logger.info('Fact-check cycle completed');
+        logger.info(`✅ Fact-check cycle completed. Processed ${processedCount} new articles.`);
+        logger.info(`📊 Total in database: ${factCheckResults.length} fact-checked articles`);
+        
     } catch (error) {
         logger.error('Error in fact-check cycle:', error);
     }
 }
 
-// Schedule fact-checking every 6 hours
-const scheduleInterval = process.env.FACT_CHECK_INTERVAL_HOURS || 6;
+// Add manual trigger endpoint
+app.post('/api/trigger-fact-check', async (req, res) => {
+    try {
+        logger.info('Manual fact-check triggered via API');
+        
+        // Run fact-check cycle immediately
+        await runFactCheckCycle();
+        
+        res.json({
+            success: true,
+            message: 'Fact-check cycle completed',
+            articlesProcessed: factCheckResults.length,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        logger.error('Error in manual fact-check:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to run fact-check cycle'
+        });
+    }
+});
+
+// Schedule fact-checking using config interval
+const scheduleInterval = config.factCheck.intervalHours;
 cron.schedule(`0 */${scheduleInterval} * * *`, runFactCheckCycle);
 
 // Start server
 app.listen(PORT, () => {
-    logger.info(`Palestine News Fact-Checker Agent running on port ${PORT}`);
-    logger.info(`Scheduled fact-checking every ${scheduleInterval} hours`);
+    logger.info(`🚀 Palestine News Fact-Checker Agent running on port ${PORT}`);
+    logger.info(`⏰ Scheduled fact-checking every ${scheduleInterval} hours`);
+    logger.info(`📱 Web interface: http://localhost:${PORT}`);
+    logger.info(`🔍 API endpoints: http://localhost:${PORT}/api/news`);
     
-    // Run initial fact-check cycle
-    setTimeout(runFactCheckCycle, 5000);
+    // Run initial fact-check cycle after a short delay
+    logger.info('🔄 Starting initial fact-check cycle in 10 seconds...');
+    setTimeout(runFactCheckCycle, 10000);
 });
 
 export default app;
