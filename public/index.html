@@ -2419,37 +2419,353 @@
         </div>
 
         <!-- Custom Article Analysis -->
-        <div id="article-comparison" class="card fade-in" style="margin-top: 1.5rem;">
-            <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-search section-icon"></i> Compare Article with Trusted Sources</h2>
-            </div>
-            <div class="card-body">
-                <p>Submit an article to cross-reference with trusted news sources</p>
-                <div class="methodology-note">
-                    <p><strong><i class="fas fa-info-circle"></i> Our Methodology:</strong> 
-                    We verify across multiple source types: traditional media, regional outlets (like HesPress), Palestinian sources, verified social media accounts, and citizen journalism. 
-                    Often, the most accurate and immediate information comes from people on the ground sharing their experiences through social media and citizen reports. 
-                    This tool prioritizes ground-truth verification over institutional narratives.</p>
+        <div id="article-comparison" class="card fade-in" style="
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+            position: relative;
+        ">
+            <!-- Decorative Background Elements -->
+            <div style="
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+                border-radius: 50%;
+                z-index: 0;
+            "></div>
+            
+            <div style="
+                position: absolute;
+                bottom: -30px;
+                left: -30px;
+                width: 100px;
+                height: 100px;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+                border-radius: 50%;
+                z-index: 0;
+            "></div>
+            
+            <div class="card-header" style="
+                position: relative;
+                z-index: 1;
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.03) 100%);
+                border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+            ">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="
+                        width: 50px;
+                        height: 50px;
+                        background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+                    ">
+                        <i class="fas fa-search" style="color: white; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Compare Article with Trusted Sources</h2>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 1rem;">Advanced cross-referencing with Palestinian sources</p>
+                    </div>
                 </div>
+            </div>
+            
+            <div class="card-body" style="position: relative; z-index: 1;">
+                <!-- Enhanced Introduction Section -->
+                <div style="
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid var(--primary);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -15px;
+                        right: -15px;
+                        width: 60px;
+                        height: 60px;
+                        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+                        border-radius: 50%;
+                        z-index: 0;
+                    "></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="
+                                width: 40px;
+                                height: 40px;
+                                background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                            ">
+                                <i class="fas fa-balance-scale" style="color: white; font-size: 1rem;"></i>
+                            </div>
+                            <h3 style="margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700;">Comprehensive Source Verification</h3>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-700); line-height: 1.6;">
+                            Submit any article for comprehensive cross-referencing with Palestinian sources, regional media, international outlets, and verified social media accounts. 
+                            Our AI prioritizes ground-truth verification over institutional narratives.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Enhanced Methodology Section -->
+                <div style="
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    border: 1px solid rgba(139, 92, 246, 0.2);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -20px;
+                        left: -20px;
+                        width: 80px;
+                        height: 80px;
+                        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
+                        border-radius: 50%;
+                        z-index: 0;
+                    "></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="
+                                width: 40px;
+                                height: 40px;
+                                background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                            ">
+                                <i class="fas fa-info-circle" style="color: white; font-size: 1rem;"></i>
+                            </div>
+                            <h4 style="margin: 0; color: var(--tertiary); font-size: 1.125rem; font-weight: 700;">Our Methodology</h4>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-700); line-height: 1.6;">
+                            We verify across multiple source types: traditional media, regional outlets (like HesPress), Palestinian sources, verified social media accounts, and citizen journalism. 
+                            Often, the most accurate and immediate information comes from people on the ground sharing their experiences through social media and citizen reports. 
+                            This tool prioritizes ground-truth verification over institutional narratives.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Enhanced Form Section -->
                 <form id="analyzeForm">
-                    <div class="form-group">
-                        <label class="form-label" for="articleUrl">Article URL (optional):</label>
-                        <input type="url" id="articleUrl" class="form-control" placeholder="https://example.com/article">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="articleTitle">Article Title:</label>
-                        <input type="text" id="articleTitle" class="form-control" placeholder="Enter article title" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label" for="articleContent">Article Content:</label>
-                        <textarea id="articleContent" class="form-control" placeholder="Paste article content here..." required></textarea>
+                    <div style="
+                        display: grid;
+                        gap: 2rem;
+                        margin-bottom: 2.5rem;
+                    ">
+                        <!-- Article URL -->
+                        <div class="form-group" style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 1px solid rgba(59, 130, 246, 0.1);
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+                            transition: all 0.3s ease;
+                        ">
+                            <label class="form-label" for="articleUrl" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.75rem;
+                                font-weight: 600;
+                                color: var(--primary);
+                                margin-bottom: 1rem;
+                                font-size: 1rem;
+                            ">
+                                <div style="
+                                    width: 32px;
+                                    height: 32px;
+                                    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                                    border-radius: 8px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+                                ">
+                                    <i class="fas fa-link" style="color: white; font-size: 0.875rem;"></i>
+                                </div>
+                                Article URL (optional)
+                            </label>
+                            <input type="url" id="articleUrl" class="form-control" placeholder="https://example.com/article" style="
+                                border: 2px solid rgba(59, 130, 246, 0.2);
+                                border-radius: 0.75rem;
+                                padding: 1rem 1.25rem;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                                background: rgba(59, 130, 246, 0.02);
+                            ">
+                            <small style="
+                                color: var(--gray-500);
+                                font-size: 0.875rem;
+                                margin-top: 0.5rem;
+                                display: block;
+                                line-height: 1.4;
+                            ">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i>
+                                Optional: Provide the original article URL for reference
+                            </small>
+                        </div>
+                        
+                        <!-- Article Content -->
+                        <div class="form-group" style="
+                            background: white;
+                            padding: 1.5rem;
+                            border-radius: 1rem;
+                            border: 1px solid rgba(16, 185, 129, 0.1);
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+                            transition: all 0.3s ease;
+                        ">
+                            <label class="form-label" for="articleContent" style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.75rem;
+                                font-weight: 600;
+                                color: var(--secondary);
+                                margin-bottom: 1rem;
+                                font-size: 1rem;
+                            ">
+                                <div style="
+                                    width: 32px;
+                                    height: 32px;
+                                    background: linear-gradient(135deg, var(--secondary) 0%, #047857 100%);
+                                    border-radius: 8px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+                                ">
+                                    <i class="fas fa-file-text" style="color: white; font-size: 0.875rem;"></i>
+                                </div>
+                                Article Content (optional)
+                            </label>
+                            <textarea id="articleContent" class="form-control" placeholder="Paste the full article content here for comprehensive analysis..." style="
+                                border: 2px solid rgba(16, 185, 129, 0.2);
+                                border-radius: 0.75rem;
+                                padding: 1rem 1.25rem;
+                                font-size: 1rem;
+                                transition: all 0.3s ease;
+                                min-height: 240px;
+                                resize: vertical;
+                                background: rgba(16, 185, 129, 0.02);
+                                line-height: 1.6;
+                            "></textarea>
+                            <small style="
+                                color: var(--gray-500);
+                                font-size: 0.875rem;
+                                margin-top: 0.5rem;
+                                display: block;
+                                line-height: 1.4;
+                            ">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem; color: var(--secondary);"></i>
+                                Provide either a URL or article content (or both) for comprehensive source verification
+                            </small>
+                        </div>
                     </div>
                     
-                    <div id="customAnalysisResult"></div>
+                    <!-- Results Section -->
+                    <div id="customAnalysisResult" style="position: relative; z-index: 1;"></div>
                 </form>
+                
+                <!-- Features Highlight -->
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-top: 2rem;
+                    padding: 1.5rem;
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+                    border-radius: 1rem;
+                    border: 1px solid rgba(139, 92, 246, 0.1);
+                ">
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                        ">
+                            <i class="fas fa-shield-check" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Palestinian Sources</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Prioritized verification</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        ">
+                            <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Citizen Journalism</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Ground-truth validation</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        ">
+                            <i class="fas fa-brain" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">AI Analysis</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Comprehensive comparison</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-footer card-footer-single">
-                <button type="submit" form="analyzeForm" class="btn btn-analyze">
+            
+            <div class="card-footer card-footer-single" style="
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                z-index: 1;
+                border-top: 1px solid rgba(59, 130, 246, 0.1);
+            ">
+                <button type="submit" form="analyzeForm" class="btn btn-analyze" style="
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+                    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+                    font-weight: 600;
+                    padding: 1rem 2rem;
+                    font-size: 1rem;
+                ">
                     <i class="fas fa-search"></i> Compare with Trusted Sources
                 </button>
             </div>
@@ -3333,12 +3649,12 @@
         async function analyzeCustomArticle(event) {
             event.preventDefault();
             
-            const url = document.getElementById('articleUrl').value;
-            const title = document.getElementById('articleTitle').value;
-            const content = document.getElementById('articleContent').value;
+            const url = document.getElementById('articleUrl').value.trim();
+            const content = document.getElementById('articleContent').value.trim();
             
-            if (!title || !content) {
-                showNotification('Please provide both title and content', 'error');
+            // Require at least one field (URL or content)
+            if (!url && !content) {
+                showNotification('Please provide either a URL or article content for analysis', 'error');
                 return;
             }
             
@@ -3353,7 +3669,11 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ url, title, content })
+                    body: JSON.stringify({ 
+                        url: url || null, 
+                        title: null, // No title field anymore
+                        content: content || null 
+                    })
                 });
                 
                 const data = await response.json();
