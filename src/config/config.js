@@ -5,7 +5,7 @@ dotenv.config();
 export const config = {
     gemini: {
         apiKey: process.env.GEMINI_API_KEY,
-        model: 'gemini-1.5-flash'
+        model: 'gemini-2.0-flash'
     },
     
     scraping: {
