@@ -240,6 +240,75 @@ app.get('/api/social-ready-articles', (req, res) => {
     }
 });
 
+// Get summary of latest fact-checked news
+app.get('/api/news-summary', (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 5;
+        
+        // Get the latest fact-checked articles
+        const latestResults = factCheckResults.slice(-limit).reverse();
+        
+        // Calculate summary statistics
+        const totalArticles = factCheckResults.length;
+        const verifiedCount = factCheckResults.filter(r => 
+            (r.analysis?.overallAssessment || r.overallAssessment) === 'VERIFIED'
+        ).length;
+        const disputedCount = factCheckResults.filter(r => 
+            ['DISPUTED', 'MISLEADING'].includes(r.analysis?.overallAssessment || r.overallAssessment)
+        ).length;
+        const avgCredibility = factCheckResults.length > 0 ? 
+            factCheckResults.reduce((sum, r) => sum + (r.analysis?.credibilityScore || r.credibilityScore || 0), 0) / factCheckResults.length 
+            : 0;
+        
+        // Create summary for each article
+        const summaryArticles = latestResults.map((result, index) => {
+            const credibility = result.analysis?.credibilityScore || result.credibilityScore || 0;
+            const assessment = result.analysis?.overallAssessment || result.overallAssessment || 'UNVERIFIED';
+            const keyIssues = result.analysis?.redFlags || [];
+            const keyFindings = result.analysis?.keyFindings || [];
+            
+            return {
+                id: factCheckResults.length - index - 1,
+                title: result.articleTitle || result.title,
+                source: result.articleSource || result.source,
+                url: result.articleUrl || result.url,
+                credibilityScore: credibility,
+                overallAssessment: assessment,
+                processedAt: result.processedAt,
+                summary: {
+                    status: assessment,
+                    credibilityLevel: credibility >= 0.7 ? 'HIGH' : credibility >= 0.4 ? 'MEDIUM' : 'LOW',
+                    mainConcerns: keyIssues.slice(0, 2), // Top 2 concerns
+                    verificationStatus: keyFindings.length > 0 ? 
+                        `${keyFindings.filter(f => f.verification === 'VERIFIED').length}/${keyFindings.length} claims verified` 
+                        : 'No detailed verification available',
+                    riskLevel: assessment === 'MISLEADING' || credibility < 0.3 ? 'HIGH' :
+                              assessment === 'DISPUTED' || credibility < 0.5 ? 'MEDIUM' : 'LOW'
+                }
+            };
+        });
+        
+        res.json({
+            success: true,
+            summary: {
+                totalAnalyzed: totalArticles,
+                verifiedArticles: verifiedCount,
+                disputedArticles: disputedCount,
+                averageCredibility: Math.round(avgCredibility * 100),
+                lastUpdated: factCheckResults.length > 0 ? factCheckResults[factCheckResults.length - 1].processedAt : null
+            },
+            latestArticles: summaryArticles,
+            hasMore: factCheckResults.length > limit
+        });
+    } catch (error) {
+        logger.error('Error generating news summary:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to generate news summary'
+        });
+    }
+});
+
 // Background job to collect and analyze news
 async function runFactCheckCycle() {
     try {
