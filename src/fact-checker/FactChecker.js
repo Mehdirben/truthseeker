@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { config } from '../config/config.js';
 import { newsSources } from '../sources/sources.js';
 import { logger, delay, extractMainContent } from '../utils/logger.js';
+import { SocialMediaScraper } from '../social-media/SocialMediaScraper.js';
 
 export class FactChecker {
     constructor() {
@@ -11,6 +12,7 @@ export class FactChecker {
         
         this.genAI = new GoogleGenerativeAI(config.gemini.apiKey);
         this.model = this.genAI.getGenerativeModel({ model: config.gemini.model });
+        this.socialMediaScraper = new SocialMediaScraper();
     }
 
     async analyzeArticle(article) {
