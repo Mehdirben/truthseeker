@@ -35,8 +35,16 @@ export class SocialMediaPostGenerator {
         const platformSpecs = this.getPlatformSpecifications(platform);
         const fakeNewsWarning = this.buildFakeNewsWarning(analysis);
         
+        // Extract social media verification info
+        const socialMediaStatus = analysis.socialMediaVerification ? 
+            `${analysis.socialMediaVerification.status} - ${analysis.socialMediaVerification.result}` : 
+            'Not verified against social media sources';
+        
+        const groundTruthInfo = analysis.sourceAnalysis?.groundTruthAlignment || 'Not assessed against ground sources';
+        const palestinianContext = analysis.sourceAnalysis?.palestinianContext || 'Palestinian perspective not noted';
+        
         return `
-As a social media expert specializing in news communication and misinformation prevention, create an engaging ${platform} post about this news article and its fact-check analysis:
+As a social media expert specializing in news communication and ground-truth verification, create an engaging ${platform} post about this news article and its comprehensive source verification:
 
 **Article Information:**
 - Title: ${article.title}
@@ -44,11 +52,14 @@ As a social media expert specializing in news communication and misinformation p
 - URL: ${article.url}
 - Published: ${article.publishedAt || 'Recent'}
 
-**Fact-Check Analysis:**
+**Comprehensive Verification Analysis:**
 - Credibility Score: ${analysis.credibilityScore || 0}/1.0
 - Overall Assessment: ${analysis.overallAssessment || 'UNVERIFIED'}
+- Social Media Verification: ${socialMediaStatus}
+- Ground Truth Alignment: ${groundTruthInfo}
+- Palestinian Context: ${palestinianContext}
 - Key Issues: ${analysis.redFlags?.join(', ') || 'None identified'}
-- Verification Status: ${credibilityStatus}
+- Sources Verified: ${analysis.trustedSources?.join(', ') || 'Traditional sources only'}
 
 **Platform Specifications:**
 ${platformSpecs}
@@ -56,7 +67,7 @@ ${platformSpecs}
 **Tone:** ${tone}
 
 ${fakeNewsWarning ? `
-**IMPORTANT - MISINFORMATION ALERT:**
+**IMPORTANT - VERIFICATION ALERT:**
 Warning Level: ${fakeNewsWarning.level.toUpperCase()}
 Message: ${fakeNewsWarning.message}
 Required Hashtags: ${fakeNewsWarning.hashtags.join(', ')}
@@ -65,54 +76,58 @@ Required Hashtags: ${fakeNewsWarning.hashtags.join(', ')}
 Please generate a social media post in JSON format:
 
 {
-    "post": "<main post content>",
+    "post": "<main post content emphasizing ground-truth verification>",
     "hashtags": ["<relevant hashtag 1>", "<relevant hashtag 2>", "..."],
     "characterCount": <number of characters>,
     "engagement": {
-        "callToAction": "<encourage specific user action>",
-        "questionPrompt": "<optional question to drive engagement>"
+        "callToAction": "<encourage verification through multiple source types>",
+        "questionPrompt": "<optional question about source verification>"
     },
     "warnings": {
         "includeFactCheckWarning": <true/false>,
-        "warningText": "<warning text if credibility is low>",
+        "warningText": "<warning text if contradicts social media/citizen reports>",
         "warningLevel": "<high/medium/low if applicable>"
     },
     "alternativeVersions": [
         {
             "style": "brief",
-            "content": "<shorter version>"
+            "content": "<shorter version mentioning source verification>"
         },
         {
-            "style": "detailed",
-            "content": "<more detailed version>"
+            "style": "detailed", 
+            "content": "<detailed version including social media verification>"
         }
     ],
     "visualSuggestions": [
-        "<suggestion 1 for accompanying visual content>",
-        "<suggestion 2 for infographic elements>"
+        "<suggestion for social media verification infographic>",
+        "<suggestion for source comparison visual>"
     ],
     "responsibleSharing": {
-        "tips": ["<tip 1 for responsible sharing>", "<tip 2>"],
-        "verificationSources": ["<suggested verification source 1>", "<source 2>"]
+        "tips": [
+            "Check social media for eyewitness accounts",
+            "Look for Palestinian sources and perspectives", 
+            "Cross-reference with citizen journalism",
+            "Verify with regional sources like HesPress"
+        ],
+        "verificationSources": ["Social media accounts", "Palestinian outlets", "Regional sources", "Citizen reports"]
     }
 }
 
-**Guidelines:**
-1. Be factual and responsible in reporting
-2. Include appropriate warnings for disputed or unverified content
-3. Use engaging but professional language
-4. Include relevant hashtags for discoverability
-5. Encourage critical thinking and fact-checking
-6. Respect character limits for the platform
-7. Include call-to-action to read full analysis
-8. Balance engagement with journalistic integrity
-9. Use emojis appropriately for the platform
-10. Consider the sensitivity of the topic
-11. For disputed/misleading content, prioritize warning over engagement
-12. Always encourage verification with multiple sources
-13. Include media literacy education when appropriate
+**Enhanced Guidelines:**
+1. Emphasize the importance of social media and citizen journalism verification
+2. Highlight when institutional sources contradict ground-truth evidence
+3. Mention Palestinian perspectives and regional sources like HesPress
+4. Include warnings when social media evidence contradicts the article
+5. Encourage users to check multiple source types, not just traditional media
+6. Prioritize ground-truth verification over institutional narratives
+7. Use hashtags that promote citizen journalism and social media verification
+8. Call attention to missing Palestinian context in institutional reporting
+9. Encourage followers to seek eyewitness accounts and local perspectives
+10. Balance engagement with media literacy about source verification types
+11. Highlight the value of real-time social media reporting vs delayed institutional media
+12. Promote critical thinking about institutional bias vs ground truth
 
-Make the post informative, engaging, and responsible. Prioritize public safety and accurate information over viral potential.`;
+Make the post informative about comprehensive source verification, encouraging followers to seek truth from multiple source types including social media and citizen journalism.`;
     }
 
     getPlatformSpecifications(platform) {

@@ -88,6 +88,96 @@ export const newsSources = {
             date: 'time',
             author: '[data-gu-name="meta"]'
         }
+    },
+    
+    hespress: {
+        name: 'HesPress',
+        baseUrl: 'https://www.hespress.com',
+        rssUrl: 'https://www.hespress.com/rss',
+        credibilityScore: 0.8,
+        bias: 'center-left',
+        isReputable: true,
+        category: 'regional',
+        country: 'Morocco',
+        language: 'Arabic/French',
+        selectors: {
+            title: 'h1.article-title',
+            content: '.article-content',
+            date: '.article-date',
+            author: '.article-author'
+        }
+    },
+    
+    palestineChronicle: {
+        name: 'Palestine Chronicle',
+        baseUrl: 'https://www.palestinechronicle.com',
+        rssUrl: 'https://www.palestinechronicle.com/feed/',
+        credibilityScore: 0.85,
+        bias: 'pro-palestine',
+        isReputable: true,
+        category: 'palestinian',
+        perspective: 'palestinian',
+        selectors: {
+            title: 'h1.entry-title',
+            content: '.entry-content',
+            date: '.entry-date',
+            author: '.entry-author'
+        }
+    },
+    
+    maanNews: {
+        name: 'Maan News Agency',
+        baseUrl: 'https://www.maannews.com',
+        credibilityScore: 0.8,
+        bias: 'pro-palestine',
+        isReputable: true,
+        category: 'palestinian',
+        perspective: 'palestinian',
+        selectors: {
+            title: 'h1',
+            content: '.content',
+            date: '.date',
+            author: '.author'
+        }
+    },
+    
+    // Social Media Verification Sources
+    socialMediaSources: {
+        name: 'Social Media Verification',
+        category: 'citizen_journalism',
+        platforms: [
+            'Twitter/X verified accounts',
+            'Instagram eyewitness content',
+            'TikTok ground reports',
+            'Telegram channels',
+            'Facebook verified pages'
+        ],
+        credibilityScore: 0.75,
+        bias: 'varied',
+        isReputable: true,
+        verificationMethods: [
+            'Cross-reference multiple accounts',
+            'Geolocation verification',
+            'Timestamp analysis',
+            'User history verification',
+            'Content authenticity checks'
+        ]
+    },
+    
+    citizenJournalism: {
+        name: 'Citizen Journalism Networks',
+        category: 'ground_truth',
+        sources: [
+            'Local photographers',
+            'Independent journalists',
+            'Eyewitness accounts',
+            'Community reporters',
+            'Human rights activists'
+        ],
+        credibilityScore: 0.8,
+        bias: 'ground_truth',
+        isReputable: true,
+        verificationApproach: 'cross_reference_multiple_witnesses'
     }
 };
 

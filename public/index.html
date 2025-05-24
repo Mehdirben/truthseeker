@@ -1060,13 +1060,41 @@
             font-size: 0.9rem;
             line-height: 1.5;
         }
+
+        /* Social media verification styling */
+        .social-verification {
+            margin-top: 0.5rem;
+        }
+
+        .verification-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .verification-badge.confirmed {
+            background: var(--success);
+            color: white;
+        }
+
+        .verification-badge.disputed {
+            background: var(--warning);
+            color: white;
+        }
+
+        .verification-badge.contradicted {
+            background: var(--danger);
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
             <h1><i class="fas fa-balance-scale"></i> Palestine News Source Verification</h1>
-            <p>Cross-referencing news with trusted sources: Reuters, BBC, AP News, Al Jazeera, Palestinian outlets & verified regional sources</p>
+            <p>Cross-referencing with trusted sources: International outlets (Reuters, BBC, AP), Regional sources (Al Jazeera, HesPress), Palestinian outlets, social media verification, and citizen journalism</p>
         </header>
 
         <!-- Dashboard Overview -->
@@ -1200,9 +1228,9 @@
                 <p>Submit an article to cross-reference with trusted news sources</p>
                 <div class="methodology-note">
                     <p><strong><i class="fas fa-info-circle"></i> Our Methodology:</strong> 
-                    We prioritize including Palestinian sources and local perspectives alongside international outlets. 
-                    Many international sources lack crucial context that only Palestinian journalists and local sources can provide. 
-                    This tool aims to highlight these gaps and ensure comprehensive verification.</p>
+                    We verify across multiple source types: traditional media, regional outlets (like HesPress), Palestinian sources, verified social media accounts, and citizen journalism. 
+                    Often, the most accurate and immediate information comes from people on the ground sharing their experiences through social media and citizen reports. 
+                    This tool prioritizes ground-truth verification over institutional narratives.</p>
                 </div>
                 <form id="analyzeForm">
                     <div class="form-group">
@@ -1640,35 +1668,35 @@
                 return '<p>No recent news articles have been analyzed in the past 48 hours.</p>';
             }
 
-            let summary = `<p>In the past 48 hours, we have cross-referenced <strong>${articles.length} news articles</strong> with trusted sources including international outlets (Reuters, BBC, AP News), regional sources (Al Jazeera), Palestinian news outlets, and verified local sources to ensure comprehensive perspective. `;
+            let summary = `<p>In the past 48 hours, we have cross-referenced <strong>${articles.length} news articles</strong> with multiple source types: international outlets (Reuters, BBC, AP News), regional sources (Al Jazeera, HesPress), Palestinian news outlets, verified social media accounts, and citizen journalism reports to ensure comprehensive ground-truth verification. `;
 
             if (avgCredibility >= 70) {
-                summary += `Most reporting shows consistency across diverse sources (${avgCredibility}% average match), indicating reliable information from multiple perspectives including Palestinian sources.`;
+                summary += `Most reporting shows consistency across diverse sources including social media verification (${avgCredibility}% average match), indicating reliable information from multiple perspectives including on-the-ground witnesses.`;
             } else if (avgCredibility >= 50) {
-                summary += `There are discrepancies between different source perspectives (${avgCredibility}% average match), highlighting the importance of consulting Palestinian and regional sources alongside international outlets.`;
+                summary += `There are discrepancies between institutional sources and social media/citizen reports (${avgCredibility}% average match), highlighting the importance of consulting ground-level sources and eyewitness accounts.`;
             } else {
-                summary += `Significant differences found across source perspectives (${avgCredibility}% average match), underscoring the critical need to include Palestinian voices and local sources in verification.`;
+                summary += `Major differences found between official reporting and social media/citizen journalism (${avgCredibility}% average match), suggesting institutional sources may be missing crucial on-ground reality.`;
             }
             summary += '</p>';
 
             if (verifiedCount > 0) {
-                summary += `<p><strong>${verifiedCount} articles</strong> show consistency across international, regional, and Palestinian sources. `;
+                summary += `<p><strong>${verifiedCount} articles</strong> show consistency across institutional sources, social media verification, and citizen reports. `;
             }
 
             if (disputedCount > 0) {
-                summary += `<strong>${disputedCount} articles</strong> show significant differences between international and Palestinian/regional source reporting. `;
+                summary += `<strong>${disputedCount} articles</strong> show significant differences between institutional reporting and social media/eyewitness accounts. `;
             }
 
             if (disputedCount === 0 && verifiedCount === articles.length) {
-                summary += 'All recent articles show alignment across diverse source perspectives including Palestinian outlets.</p>';
+                summary += 'All recent articles show alignment across institutional sources, social media, and citizen journalism.</p>';
             } else if (disputedCount > verifiedCount) {
-                summary += `<strong>Exercise caution</strong> - ${Math.round((disputedCount/articles.length)*100)}% of articles show major discrepancies, often missing Palestinian perspectives or contradicting local sources.</p>`;
+                summary += `<strong>Exercise caution</strong> - ${Math.round((disputedCount/articles.length)*100)}% of articles contradict social media evidence and citizen reports, suggesting potential institutional bias or incomplete reporting.</p>`;
             } else {
-                summary += 'Most information aligns across sources, but always consult Palestinian and regional outlets for complete context.</p>';
+                summary += 'Most information aligns across sources, but always verify with social media and citizen journalism for complete ground truth.</p>';
             }
 
-            // Add specific note about Palestinian source importance
-            summary += '<p><em>Note: This verification emphasizes the importance of including Palestinian sources and perspectives, as international coverage often lacks crucial local context and firsthand accounts.</em></p>';
+            // Add specific note about social media and citizen journalism importance
+            summary += '<p><em>Note: Social media verification and citizen journalism often provide crucial real-time information and perspectives that institutional media may miss, delay, or filter. This tool prioritizes ground-truth sources alongside traditional outlets.</em></p>';
 
             return summary;
         }
@@ -1863,9 +1891,19 @@
                             
                             ${item.analysis.trustedSources || item.analysis.sources ? `
                                 <div style="margin-bottom: 1rem;">
-                                    <strong><i class="fas fa-shield-check"></i> Compared Against:</strong>
+                                    <strong><i class="fas fa-shield-check"></i> Verified Against:</strong>
                                     <div class="trusted-sources">
                                         ${getTrustedSourcesList(item.analysis.trustedSources || item.analysis.sources)}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${item.analysis.socialMediaVerification ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <strong><i class="fas fa-users"></i> Social Media & Citizen Verification:</strong>
+                                    <div class="social-verification">
+                                        <span class="verification-badge ${item.analysis.socialMediaVerification.status}">${item.analysis.socialMediaVerification.result}</span>
+                                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">${escapeHtml(item.analysis.socialMediaVerification.details || 'Cross-referenced with verified social media accounts and citizen reports')}</p>
                                     </div>
                                 </div>
                             ` : ''}
@@ -2141,21 +2179,25 @@
 
         // Helper functions for source comparison display
         function getSourceComparisonStatus(assessment) {
-            if (!assessment) return 'Not Yet Compared';
-            if (assessment.toLowerCase().includes('verified')) return 'Matches Trusted Sources';
-            if (assessment.toLowerCase().includes('disputed')) return 'Contradicts Trusted Sources';
+            if (!assessment) return 'Not Yet Verified';
+            if (assessment.toLowerCase().includes('verified') || assessment.toLowerCase().includes('confirmed')) return 'Verified Across Sources';
+            if (assessment.toLowerCase().includes('disputed') || assessment.toLowerCase().includes('contradiction')) return 'Disputed by Ground Sources';
+            if (assessment.toLowerCase().includes('social media confirmed')) return 'Confirmed by Social Media';
+            if (assessment.toLowerCase().includes('citizen confirmed')) return 'Confirmed by Citizen Reports';
             return assessment;
         }
 
         function getSourceVerificationText(verification) {
-            if (!verification) return 'Not found in trusted sources';
-            if (verification.toLowerCase().includes('verified')) return 'Confirmed by trusted sources';
-            if (verification.toLowerCase().includes('disputed')) return 'Contradicted by trusted sources';
+            if (!verification) return 'Not found in any sources';
+            if (verification.toLowerCase().includes('verified') || verification.toLowerCase().includes('confirmed')) return 'Confirmed by multiple source types';
+            if (verification.toLowerCase().includes('disputed') || verification.toLowerCase().includes('contradicted')) return 'Contradicted by ground sources';
+            if (verification.toLowerCase().includes('social media')) return 'Found in social media reports';
+            if (verification.toLowerCase().includes('citizen')) return 'Reported by citizen journalists';
             return verification;
         }
 
         function getTrustedSourcesList(sources) {
-            if (!sources) return '<span class="source-tag">Reuters</span><span class="source-tag">BBC</span><span class="source-tag">AP News</span><span class="source-tag">Al Jazeera</span><span class="source-tag">Palestinian outlets</span>';
+            if (!sources) return '<span class="source-tag">International</span><span class="source-tag">HesPress</span><span class="source-tag">Palestinian outlets</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Journalism</span>';
             if (typeof sources === 'string') {
                 return sources.split(',').map(source => 
                     `<span class="source-tag">${escapeHtml(source.trim())}</span>`
@@ -2166,7 +2208,7 @@
                     `<span class="source-tag">${escapeHtml(source)}</span>`
                 ).join('');
             }
-            return '<span class="source-tag">Reuters</span><span class="source-tag">BBC</span><span class="source-tag">AP News</span><span class="source-tag">Al Jazeera</span>';
+            return '<span class="source-tag">Traditional Media</span><span class="source-tag">Regional Sources</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Reports</span>';
         }
     </script>
 </body>
