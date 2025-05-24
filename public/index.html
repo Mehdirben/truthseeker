@@ -40,6 +40,10 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
@@ -52,6 +56,35 @@
             font-family: 'Poppins', sans-serif;
             font-weight: 600;
             letter-spacing: -0.025em;
+        }
+
+        /* Anchor link styling */
+        a.btn {
+            text-decoration: none;
+        }
+
+        a.btn:hover {
+            text-decoration: none;
+        }
+
+        /* Target highlighting for anchor links */
+        .card:target {
+            animation: highlightTarget 2s ease-in-out;
+        }
+
+        @keyframes highlightTarget {
+            0% {
+                box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+                transform: scale(1.02);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+                transform: scale(1.01);
+            }
+            100% {
+                box-shadow: var(--card-shadow);
+                transform: scale(1);
+            }
         }
 
         .container {
@@ -111,58 +144,208 @@
         }
 
         .btn {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.625rem;
+            font-weight: 600;
             cursor: pointer;
             font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
             transition: all var(--transition-speed) ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            background: var(--primary-dark);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
         }
 
         .btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
         }
 
         .btn-secondary {
-            background: var(--secondary);
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
         }
 
         .btn-secondary:hover {
-            background: var(--secondary-dark);
+            background: linear-gradient(135deg, var(--secondary-dark) 0%, var(--secondary) 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
         }
 
         .btn-tertiary {
-            background: var(--tertiary);
+            background: linear-gradient(135deg, var(--tertiary) 0%, #7C3AED 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
+        .btn-tertiary:hover {
+            background: linear-gradient(135deg, #7C3AED 0%, var(--tertiary) 100%);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
         }
 
         .btn-outline {
             background: transparent;
-            border: 1px solid var(--primary);
+            border: 2px solid var(--primary);
             color: var(--primary);
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-outline::before {
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
         }
 
         .btn-outline:hover {
-            background: var(--primary-light);
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.25);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #DC2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #DC2626 0%, var(--danger) 100%);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.35);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:disabled:hover {
+            transform: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .btn i {
+            font-size: 1rem;
+        }
+
+        /* Enhanced Card Footer */
+        .card-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .card-footer-single {
+            justify-content: center;
+        }
+
+        .card-footer-multiple {
+            justify-content: space-between;
+        }
+
+        .card-footer-grouped {
+            justify-content: flex-end;
+        }
+
+        /* Button Groups */
+        .btn-group {
+            display: flex;
+            gap: 0.625rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-group-primary {
+            order: 2;
+        }
+
+        .btn-group-secondary {
+            order: 1;
+        }
+
+        /* Special button styles for specific actions */
+        .btn-refresh {
+            background: linear-gradient(135deg, var(--info) 0%, #1E40AF 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+        }
+
+        .btn-refresh:hover {
+            background: linear-gradient(135deg, #1E40AF 0%, var(--info) 100%);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, var(--secondary) 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-generate:hover {
+            background: linear-gradient(135deg, #059669 0%, var(--secondary) 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-analyze {
+            background: linear-gradient(135deg, var(--tertiary) 0%, #6D28D9 100%);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
+        }
+
+        .btn-analyze:hover {
+            background: linear-gradient(135deg, #6D28D9 0%, var(--tertiary) 100%);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.35);
+        }
+
+        /* Responsive button design */
+        @media (max-width: 768px) {
+            .card-footer {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .btn-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .btn {
+                flex: 1;
+                min-width: auto;
+                max-width: 200px;
+                padding: 0.75rem 1.25rem;
+                font-size: 0.875rem;
+            }
+            
+            .card-footer-multiple {
+                justify-content: center;
+            }
         }
 
         .dashboard-layout {
@@ -195,12 +378,25 @@
         }
 
         .card-footer {
-            padding: 1rem 1.5rem;
+            padding: 1.25rem 1.5rem;
             border-top: 1px solid var(--gray-200);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            flex-wrap: wrap;
+        }
+
+        .card-footer-single {
+            justify-content: center;
+        }
+
+        .card-footer-multiple {
+            justify-content: space-between;
+        }
+
+        .card-footer-grouped {
             justify-content: flex-end;
-            gap: 0.75rem;
-            background: var(--gray-100);
         }
 
         .stats-grid {
@@ -1088,6 +1284,160 @@
             background: var(--danger);
             color: white;
         }
+
+        /* Button loading state */
+        .btn.loading {
+            pointer-events: none;
+            position: relative;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            margin: auto;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s ease infinite;
+        }
+
+        @keyframes button-loading-spinner {
+            from {
+                transform: rotate(0turn);
+            }
+            to {
+                transform: rotate(1turn);
+            }
+        }
+
+        .btn.loading i {
+            opacity: 0;
+        }
+
+        .btn.loading .btn-text {
+            opacity: 0.7;
+        }
+
+        /* Button size variants */
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-width: 100px;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.125rem;
+            min-width: 160px;
+        }
+
+        /* Button with badges/counters */
+        .btn-with-badge {
+            position: relative;
+        }
+
+        .btn-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Icon-only buttons */
+        .btn-icon-only {
+            width: 44px;
+            height: 44px;
+            padding: 0;
+            min-width: auto;
+            border-radius: 50%;
+            font-size: 1.125rem;
+        }
+
+        .btn-icon-only i {
+            margin: 0;
+        }
+
+        /* Button groups with better spacing */
+        .btn-group.btn-group-connected {
+            gap: 0;
+        }
+
+        .btn-group-connected .btn:not(:first-child) {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
+
+        .btn-group-connected .btn:not(:last-child) {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        /* Card footer enhancements */
+        .card-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+        }
+
+        .card-footer {
+            position: relative;
+        }
+
+        /* Success/Error button states */
+        .btn.btn-success {
+            background: linear-gradient(135deg, var(--success) 0%, #047857 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn.btn-success:hover {
+            background: linear-gradient(135deg, #047857 0%, var(--success) 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn.btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #D97706 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        }
+
+        .btn.btn-warning:hover {
+            background: linear-gradient(135deg, #D97706 0%, var(--warning) 100%);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.35);
+        }
+
+        /* Premium button style */
+        .btn.btn-premium {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #333;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+        }
+
+        .btn.btn-premium:hover {
+            background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.35);
+            color: #333;
+        }
+
+        .btn.btn-premium::before {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
     </style>
 </head>
 <body>
@@ -1096,6 +1446,181 @@
             <h1><i class="fas fa-balance-scale"></i> Palestine News Source Verification</h1>
             <p>Cross-referencing with trusted sources: International outlets (Reuters, BBC, AP), Regional sources (Al Jazeera, HesPress), Palestinian outlets, social media verification, and citizen journalism</p>
         </header>
+
+        <!-- How It Works Section -->
+        <div class="card fade-in" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <h2 class="section-title"><i class="fas fa-info-circle section-icon"></i> How This Tool Works</h2>
+            </div>
+            <div class="card-body">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <!-- Source Verification Card -->
+                    <div class="stat-card" style="
+                        text-align: left; 
+                        padding: 2rem; 
+                        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%);
+                        border: 1px solid rgba(59, 130, 246, 0.2);
+                        position: relative;
+                        overflow: hidden;
+                        min-height: 280px;
+                        display: flex;
+                        flex-direction: column;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: -20px;
+                            right: -20px;
+                            width: 80px;
+                            height: 80px;
+                            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+                            border-radius: 50%;
+                            z-index: 0;
+                        "></div>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                                border-radius: 12px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                            ">
+                                <i class="fas fa-search" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <h3 style="margin: 0; color: var(--gray-800); font-size: 1.375rem; font-weight: 700;">Source Verification</h3>
+                        </div>
+                        
+                        <p style="
+                            color: var(--gray-600); 
+                            line-height: 1.7; 
+                            margin: 0 0 auto 0; 
+                            font-size: 1rem;
+                            position: relative;
+                            z-index: 1;
+                        ">We cross-reference news articles with multiple trusted sources including Palestinian outlets, regional media, international news, verified social media accounts, and citizen journalism to provide comprehensive verification.</p>
+                        
+                        <div style="margin-top: 2rem; position: relative; z-index: 1;">
+                            <a href="#article-comparison" class="btn" style="
+                                text-decoration: none;
+                                width: 100%;
+                                background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3);
+                                font-weight: 600;
+                                padding: 1rem 1.5rem;
+                                font-size: 1rem;
+                            ">
+                                <i class="fas fa-search"></i> Compare Article with Sources
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media Posts Card -->
+                    <div class="stat-card" style="
+                        text-align: left; 
+                        padding: 2rem; 
+                        background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.1) 100%);
+                        border: 1px solid rgba(16, 185, 129, 0.2);
+                        position: relative;
+                        overflow: hidden;
+                        min-height: 280px;
+                        display: flex;
+                        flex-direction: column;
+                    ">
+                        <div style="
+                            position: absolute;
+                            top: -20px;
+                            right: -20px;
+                            width: 80px;
+                            height: 80px;
+                            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.2) 100%);
+                            border-radius: 50%;
+                            z-index: 0;
+                        "></div>
+                        
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; position: relative; z-index: 1;">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+                                border-radius: 12px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                            ">
+                                <i class="fas fa-share-alt" style="color: white; font-size: 1.25rem;"></i>
+                            </div>
+                            <h3 style="margin: 0; color: var(--gray-800); font-size: 1.375rem; font-weight: 700;">Social Media Posts</h3>
+                        </div>
+                        
+                        <p style="
+                            color: var(--gray-600); 
+                            line-height: 1.7; 
+                            margin: 0 0 auto 0; 
+                            font-size: 1rem;
+                            position: relative;
+                            z-index: 1;
+                        ">Generate responsible social media content with built-in fact-check warnings and verification recommendations for Twitter, Facebook, Instagram, and LinkedIn.</p>
+                        
+                        <div style="margin-top: 2rem; position: relative; z-index: 1;">
+                            <a href="#social-media-generator" class="btn btn-secondary" style="
+                                text-decoration: none;
+                                width: 100%;
+                                background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+                                box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+                                font-weight: 600;
+                                padding: 1rem 1.5rem;
+                                font-size: 1rem;
+                            ">
+                                <i class="fas fa-share-alt"></i> Generate Social Media Posts
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="
+                    background: linear-gradient(135deg, var(--primary-light) 0%, rgba(59, 130, 246, 0.08) 100%);
+                    border-radius: 1rem; 
+                    padding: 2rem; 
+                    border-left: 4px solid var(--primary);
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -30px;
+                        left: -30px;
+                        width: 100px;
+                        height: 100px;
+                        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+                        border-radius: 50%;
+                        z-index: 0;
+                    "></div>
+                    
+                    <div style="position: relative; z-index: 1;">
+                        <div style="
+                            width: 60px;
+                            height: 60px;
+                            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 1.5rem auto;
+                            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+                        ">
+                            <i class="fas fa-info-circle" style="color: white; font-size: 1.5rem;"></i>
+                        </div>
+                        <h3 style="margin: 0 0 1rem 0; color: var(--primary-dark); font-size: 1.5rem; font-weight: 700;">How to Use This Tool</h3>
+                        <p style="margin: 0; color: var(--gray-700); font-size: 1.1rem; line-height: 1.6; max-width: 600px; margin: 0 auto;">This tool provides two main features: source verification for news articles and responsible social media content generation. Use the buttons above to access these features directly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Dashboard Overview -->
         <div class="dashboard-layout">
@@ -1119,9 +1644,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn" onclick="refreshNews()"><i class="fas fa-sync-alt"></i> Refresh News</button>
-                    <button class="btn btn-outline" onclick="toggleView()"><i class="fas fa-exchange-alt"></i> Toggle View</button>
+                <div class="card-footer card-footer-single">
+                    <button class="btn btn-refresh" onclick="refreshNews()">
+                        <i class="fas fa-sync-alt"></i> Refresh News
+                    </button>
                 </div>
             </div>
 
@@ -1143,6 +1669,11 @@
                         <div class="status-value" id="nextScan">In 6 hours</div>
                     </div>
                 </div>
+                <div class="card-footer card-footer-single">
+                    <button class="btn btn-outline" onclick="window.location.reload()">
+                        <i class="fas fa-redo-alt"></i> Refresh Status
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1156,8 +1687,10 @@
                     <div class="loading"><div class="spinner"></div> Loading summary...</div>
                 </div>
             </div>
-            <div class="card-footer">
-                <button class="btn" onclick="refreshSummary()"><i class="fas fa-sync-alt"></i> Refresh Summary</button>
+            <div class="card-footer card-footer-single">
+                <button class="btn btn-refresh" onclick="refreshSummary()">
+                    <i class="fas fa-sync-alt"></i> Refresh Summary
+                </button>
             </div>
         </div>
 
@@ -1170,13 +1703,15 @@
                 <div class="loading" id="loading" style="display: none;"><div class="spinner"></div> Loading source comparisons...</div>
                 <div id="articlesContainer"></div>
             </div>
-            <div class="card-footer">
-                <button class="btn" onclick="refreshFactChecks()"><i class="fas fa-sync-alt"></i> Refresh Comparisons</button>
+            <div class="card-footer card-footer-single">
+                <button class="btn btn-refresh" onclick="refreshFactChecks()">
+                    <i class="fas fa-sync-alt"></i> Refresh Comparisons
+                </button>
             </div>
         </div>
 
         <!-- Social Media Generator -->
-        <div class="card fade-in" style="margin-top: 1.5rem;">
+        <div id="social-media-generator" class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
                 <h2 class="section-title"><i class="fas fa-share-alt section-icon"></i> Generate Social Media Posts</h2>
             </div>
@@ -1212,15 +1747,25 @@
                 
                 <div id="socialPostResult"></div>
             </div>
-            <div class="card-footer">
-                <button class="btn btn-outline" onclick="loadSocialReadyArticles()"><i class="fas fa-refresh"></i> Refresh Articles</button>
-                <button class="btn" onclick="generateSinglePost()"><i class="fas fa-comment"></i> Generate Single Post</button>
-                <button class="btn btn-secondary" onclick="generateMultiplePosts()"><i class="fas fa-comments"></i> Generate All Platforms</button>
+            <div class="card-footer card-footer-multiple">
+                <div class="btn-group btn-group-secondary">
+                    <button class="btn btn-outline" onclick="loadSocialReadyArticles()">
+                        <i class="fas fa-refresh"></i> Refresh Articles
+                    </button>
+                </div>
+                <div class="btn-group btn-group-primary">
+                    <button class="btn btn-generate" onclick="generateSinglePost()">
+                        <i class="fas fa-comment"></i> Generate Single Post
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateMultiplePosts()">
+                        <i class="fas fa-comments"></i> Generate All Platforms
+                    </button>
+                </div>
             </div>
         </div>
 
         <!-- Custom Article Analysis -->
-        <div class="card fade-in" style="margin-top: 1.5rem;">
+        <div id="article-comparison" class="card fade-in" style="margin-top: 1.5rem;">
             <div class="card-header">
                 <h2 class="section-title"><i class="fas fa-search section-icon"></i> Compare Article with Trusted Sources</h2>
             </div>
@@ -1249,8 +1794,10 @@
                     <div id="customAnalysisResult"></div>
                 </form>
             </div>
-            <div class="card-footer">
-                <button type="submit" form="analyzeForm" class="btn btn-secondary"><i class="fas fa-search"></i> Compare with Trusted Sources</button>
+            <div class="card-footer card-footer-single">
+                <button type="submit" form="analyzeForm" class="btn btn-analyze">
+                    <i class="fas fa-search"></i> Compare with Trusted Sources
+                </button>
             </div>
         </div>
     </div>
