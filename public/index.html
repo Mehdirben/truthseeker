@@ -1908,44 +1908,66 @@
                                 </div>
                             ` : ''}
                             
-                            ${item.analysis.recommendations ? `
-                                <div style="margin-bottom: 1rem;">
-                                    <strong><i class="fas fa-lightbulb"></i> Based on Source Comparison:</strong>
-                                    <p style="margin-top: 0.5rem; color: var(--gray-600);">${escapeHtml(item.analysis.recommendations)}</p>
-                                </div>
-                            ` : ''}
-                            
-                            ${item.analysis.keyFindings && item.analysis.keyFindings.length > 0 ? `
-                                <div class="key-findings">
-                                    <strong><i class="fas fa-balance-scale"></i> Source Comparison Findings:</strong>
-                                    ${item.analysis.keyFindings.slice(0, 3).map(finding => `
-                                        <div class="finding">
-                                            <div style="margin-bottom: 0.5rem;">
-                                                <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}
-                                            </div>
-                                            <div style="margin-bottom: 0.5rem;">
-                                                <strong>Trusted Source Status:</strong> 
-                                                <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
-                                                    ${getSourceVerificationText(finding.verification)}
+                            ${item.analysis.sourceComparison ? `
+                                <div class="source-comparison-section" style="margin-bottom: 1.5rem; border: 1px solid var(--primary-light); border-radius: 0.5rem; padding: 1rem; background: var(--primary-light);">
+                                    <h4 style="margin-bottom: 1rem; color: var(--primary-dark);"><i class="fas fa-balance-scale"></i> Trusted vs Western Source Comparison</h4>
+                                    
+                                    <div class="comparison-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                                        <div class="trusted-sources-panel" style="background: white; padding: 1rem; border-radius: 0.5rem;">
+                                            <h5 style="color: var(--success); margin-bottom: 0.75rem;"><i class="fas fa-shield-check"></i> Trusted Palestinian/Arab Sources</h5>
+                                            ${item.analysis.sourceComparison.coverageComparison?.palestinianSources ? `
+                                                <p><strong>Perspective:</strong> ${escapeHtml(item.analysis.sourceComparison.coverageComparison.palestinianSources.perspective)}</p>
+                                                <p><strong>Key Points:</strong> ${item.analysis.sourceComparison.coverageComparison.palestinianSources.keyPoints?.join(', ') || 'N/A'}</p>
+                                            ` : ''}
+                                            ${item.analysis.sourceComparison.coverageComparison?.arabRegionalSources ? `
+                                                <p><strong>Regional Context:</strong> ${escapeHtml(item.analysis.sourceComparison.coverageComparison.arabRegionalSources.perspective)}</p>
+                                            ` : ''}
+                                        </div>
+                                        
+                                        <div class="western-sources-panel" style="background: #fff3cd; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--warning);">
+                                            <h5 style="color: var(--warning); margin-bottom: 0.75rem;"><i class="fas fa-exclamation-triangle"></i> Western Sources Analysis</h5>
+                                            ${item.analysis.sourceComparison.coverageComparison?.westernSources ? `
+                                                <p><strong>Perspective:</strong> ${escapeHtml(item.analysis.sourceComparison.coverageComparison.westernSources.perspective)}</p>
+                                                <p><strong>Limitations:</strong> ${item.analysis.sourceComparison.coverageComparison.westernSources.limitations?.join(', ') || 'N/A'}</p>
+                                                <p><strong>Bias Detected:</strong> ${item.analysis.sourceComparison.coverageComparison.westernSources.institutionalBias?.join(', ') || 'None detected'}</p>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    
+                                    ${item.analysis.sourceComparison.discrepancyAnalysis ? `
+                                        <div class="discrepancy-analysis" style="background: #f8d7da; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--danger);">
+                                            <h5 style="color: var(--danger); margin-bottom: 0.75rem;"><i class="fas fa-search"></i> Coverage Discrepancies Found</h5>
+                                            <div style="margin-bottom: 0.5rem;"><strong>Missing Voices:</strong> ${item.analysis.sourceComparison.discrepancyAnalysis.missingVoices?.join(', ') || 'None identified'}</div>
+                                            <div style="margin-bottom: 0.5rem;"><strong>Context Gaps:</strong> ${item.analysis.sourceComparison.discrepancyAnalysis.contextGaps?.join(', ') || 'None identified'}</div>
+                                            <div><strong>Truth Gaps:</strong> ${item.analysis.sourceComparison.discrepancyAnalysis.truthGaps?.join(', ') || 'None identified'}</div>
+                                        </div>
+                                    ` : ''}
+                                    
+                                    ${item.analysis.sourceComparison.biasScore ? `
+                                        <div class="bias-score" style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 0.5rem; margin-top: 1rem;">
+                                            <div>
+                                                <strong>Western Bias Level:</strong> 
+                                                <span class="badge ${item.analysis.sourceComparison.biasScore.westernBiasLevel >= 7 ? 'badge-danger' : item.analysis.sourceComparison.biasScore.westernBiasLevel >= 4 ? 'badge-warning' : 'badge-success'}">
+                                                    ${item.analysis.sourceComparison.biasScore.westernBiasLevel}/10
                                                 </span>
                                             </div>
                                             <div>
-                                                <strong>Found in Trusted Sources:</strong> ${escapeHtml(finding.evidence || 'No matching information found in trusted sources')}
+                                                <strong>Missing Palestinian Context:</strong> 
+                                                <span class="badge ${item.analysis.sourceComparison.biasScore.missingPalestinianContext >= 7 ? 'badge-danger' : item.analysis.sourceComparison.biasScore.missingPalestinianContext >= 4 ? 'badge-warning' : 'badge-success'}">
+                                                    ${item.analysis.sourceComparison.biasScore.missingPalestinianContext}/10
+                                                </span>
                                             </div>
                                         </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                            
-                            ${item.analysis.redFlags && item.analysis.redFlags.length > 0 ? `
-                                <div class="warning-box warning-high">
-                                    <i class="fas fa-exclamation-triangle warning-icon"></i>
-                                    <div>
-                                        <strong>Discrepancies with Trusted Sources:</strong>
-                                        <ul style="margin-top: 0.5rem; margin-left: 1rem;">
-                                            ${item.analysis.redFlags.map(flag => `<li>${escapeHtml(flag)}</li>`).join('')}
-                                        </ul>
-                                    </div>
+                                    ` : ''}
+                                    
+                                    ${item.analysis.sourceComparison.recommendedSources ? `
+                                        <div class="recommended-sources" style="background: #d4edda; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid var(--success); margin-top: 1rem;">
+                                            <h5 style="color: var(--success); margin-bottom: 0.75rem;"><i class="fas fa-thumbs-up"></i> Recommended Approach</h5>
+                                            <p><strong>Most Trustworthy:</strong> ${item.analysis.sourceComparison.recommendedSources.mostTrustworthy?.join(', ') || 'Palestinian and Arab sources'}</p>
+                                            <p><strong>For Ground Truth:</strong> ${item.analysis.sourceComparison.recommendedSources.groundTruthVerification?.join(', ') || 'Social media and citizen journalism'}</p>
+                                            <p><strong>Recommended Approach:</strong> ${escapeHtml(item.analysis.sourceComparison.biasScore?.recommendedApproach || 'Prioritize Palestinian sources over western media')}</p>
+                                        </div>
+                                    ` : ''}
                                 </div>
                             ` : ''}
                         </div>
@@ -1974,6 +1996,31 @@
             if (score >= 0.7) return 'credential-high';
             if (score >= 0.4) return 'credential-medium';
             return 'credential-low';
+        }
+
+        // Helper functions for source comparison display
+        function getSourceComparisonStatus(assessment) {
+            if (!assessment) return 'Not Yet Verified';
+            if (assessment.toLowerCase().includes('verified') || assessment.toLowerCase().includes('confirmed')) return 'Verified Across Sources';
+            if (assessment.toLowerCase().includes('disputed') || assessment.toLowerCase().includes('contradiction')) return 'Disputed by Ground Sources';
+            if (assessment.toLowerCase().includes('social media confirmed')) return 'Confirmed by Social Media';
+            if (assessment.toLowerCase().includes('citizen confirmed')) return 'Confirmed by Citizen Reports';
+            return assessment;
+        }
+
+        function getTrustedSourcesList(sources) {
+            if (!sources) return '<span class="source-tag">Palestinian outlets</span><span class="source-tag">Al Jazeera</span><span class="source-tag">HesPress</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Journalism</span>';
+            if (typeof sources === 'string') {
+                return sources.split(',').map(source => 
+                    `<span class="source-tag">${escapeHtml(source.trim())}</span>`
+                ).join('');
+            }
+            if (Array.isArray(sources)) {
+                return sources.map(source => 
+                    `<span class="source-tag">${escapeHtml(source)}</span>`
+                ).join('');
+            }
+            return '<span class="source-tag">Palestinian Sources</span><span class="source-tag">Regional Sources</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Reports</span>';
         }
 
         // Update the existing display functions to use modern versions
@@ -2045,12 +2092,6 @@
             }
         `;
         document.head.appendChild(notificationStyles);
-
-        // Remove tab switching functions since we no longer need them
-        function toggleView() {
-            // Keep for backward compatibility but make it refresh fact checks
-            refreshFactChecks();
-        }
 
         function updateDashboard() {
             const totalFactChecked = factCheckData.length;
@@ -2139,76 +2180,8 @@
                             <p style="margin-top: 0.5rem; color: var(--gray-600);">${escapeHtml(analysis.recommendations)}</p>
                         </div>
                     ` : ''}
-                    
-                    ${analysis.keyFindings && analysis.keyFindings.length > 0 ? `
-                        <div class="key-findings">
-                            <strong><i class="fas fa-search"></i> Key Findings:</strong>
-                            ${analysis.keyFindings.map(finding => `
-                                <div class="finding">
-                                    <div style="margin-bottom: 0.5rem;">
-                                        <strong>Claim:</strong> ${escapeHtml(finding.claim || 'N/A')}
-                                    </div>
-                                    <div style="margin-bottom: 0.5rem;">
-                                        <strong>Status:</strong> 
-                                        <span class="verification-status ${(finding.verification || 'unverified').toLowerCase()}">
-                                            ${finding.verification || 'Unverified'}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <strong>Evidence:</strong> ${escapeHtml(finding.evidence || 'No evidence provided')}
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    ` : ''}
-                    
-                    ${analysis.redFlags && analysis.redFlags.length > 0 ? `
-                        <div class="warning-box warning-high">
-                            <i class="fas fa-exclamation-triangle warning-icon"></i>
-                            <div>
-                                <strong>Red Flags:</strong>
-                                <ul style="margin-top: 0.5rem; margin-left: 1rem;">
-                                    ${analysis.redFlags.map(flag => `<li>${escapeHtml(flag)}</li>`).join('')}
-                                </ul>
-                            </div>
-                        </div>
-                    ` : ''}
                 </div>
             `;
-        }
-
-        // Helper functions for source comparison display
-        function getSourceComparisonStatus(assessment) {
-            if (!assessment) return 'Not Yet Verified';
-            if (assessment.toLowerCase().includes('verified') || assessment.toLowerCase().includes('confirmed')) return 'Verified Across Sources';
-            if (assessment.toLowerCase().includes('disputed') || assessment.toLowerCase().includes('contradiction')) return 'Disputed by Ground Sources';
-            if (assessment.toLowerCase().includes('social media confirmed')) return 'Confirmed by Social Media';
-            if (assessment.toLowerCase().includes('citizen confirmed')) return 'Confirmed by Citizen Reports';
-            return assessment;
-        }
-
-        function getSourceVerificationText(verification) {
-            if (!verification) return 'Not found in any sources';
-            if (verification.toLowerCase().includes('verified') || verification.toLowerCase().includes('confirmed')) return 'Confirmed by multiple source types';
-            if (verification.toLowerCase().includes('disputed') || verification.toLowerCase().includes('contradicted')) return 'Contradicted by ground sources';
-            if (verification.toLowerCase().includes('social media')) return 'Found in social media reports';
-            if (verification.toLowerCase().includes('citizen')) return 'Reported by citizen journalists';
-            return verification;
-        }
-
-        function getTrustedSourcesList(sources) {
-            if (!sources) return '<span class="source-tag">International</span><span class="source-tag">HesPress</span><span class="source-tag">Palestinian outlets</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Journalism</span>';
-            if (typeof sources === 'string') {
-                return sources.split(',').map(source => 
-                    `<span class="source-tag">${escapeHtml(source.trim())}</span>`
-                ).join('');
-            }
-            if (Array.isArray(sources)) {
-                return sources.map(source => 
-                    `<span class="source-tag">${escapeHtml(source)}</span>`
-                ).join('');
-            }
-            return '<span class="source-tag">Traditional Media</span><span class="source-tag">Regional Sources</span><span class="source-tag">Social Media</span><span class="source-tag">Citizen Reports</span>';
         }
     </script>
 </body>

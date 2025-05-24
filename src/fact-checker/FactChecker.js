@@ -44,15 +44,50 @@ export class FactChecker {
         const prompt = this.buildFactCheckPrompt(article, content);
         
         try {
+            // Perform social media verification first
+            const socialMediaVerification = await this.socialMediaScraper.verifyArticleWithSocialMedia(article);
+            
+            // Perform source comparison analysis
+            const sourceComparison = await this.compareSourceCoverage(article, content);
+            
             const result = await this.model.generateContent(prompt);
             const response = result.response.text();
             
-            // Parse the AI response
-            return this.parseFactCheckResponse(response, article);
+            // Parse the AI response and enhance with our analysis
+            const analysis = this.parseFactCheckResponse(response, article);
+            
+            // Integrate social media and comparison results
+            analysis.socialMediaVerification = socialMediaVerification;
+            analysis.sourceComparison = sourceComparison;
+            analysis.finalScore = this.calculateFinalScore(analysis, article);
+            
+            return analysis;
             
         } catch (error) {
             logger.error('Gemini API error:', error.message);
             throw error;
+        }
+    }
+
+    async compareSourceCoverage(article, content) {
+        logger.info(`🔍 Comparing source coverage for: ${article.title}`);
+        
+        try {
+            const comparisonPrompt = this.buildComparisonPrompt(article, content);
+            const result = await this.model.generateContent(comparisonPrompt);
+            const response = result.response.text();
+            
+            // Parse comparison response
+            const comparisonMatch = response.match(/\{[\s\S]*\}/);
+            if (comparisonMatch) {
+                return JSON.parse(comparisonMatch[0]);
+            }
+            
+            return this.getDefaultComparison();
+            
+        } catch (error) {
+            logger.error('Source comparison failed:', error.message);
+            return this.getDefaultComparison();
         }
     }
 
@@ -281,5 +316,126 @@ Please provide a comprehensive cross-reference analysis in JSON format with the 
         
         // Ensure score is between 0 and 1
         return Math.max(0, Math.min(1, score));
+    }
+
+    buildComparisonPrompt(article, content) {
+        return `
+As an expert media analyst specializing in Palestine-Israel coverage, please compare how this story would be covered by different source types.
+
+**Article Title:** ${article.title}
+**Source:** ${article.source}
+**Content:** ${content}
+
+Analyze and compare coverage patterns in JSON format:
+
+{
+    "coverageComparison": {
+        "palestinianSources": {
+            "perspective": "<how Palestinian outlets like Maan, Palestine Chronicle would cover this>",
+            "keyPoints": ["<main points Palestinian sources would emphasize>"],
+            "missingInWestern": ["<crucial context western media typically omits>"],
+            "eyewitnessAccounts": "<would Palestinian sources include direct testimonies>"
+        },
+        "arabRegionalSources": {
+            "perspective": "<how Al Jazeera, HesPress would frame this story>",
+            "keyPoints": ["<regional context and analysis>"],
+            "missingInWestern": ["<regional perspective western media ignores>"],
+            "historicalContext": "<historical context Arab sources would provide>"
+        },
+        "westernSources": {
+            "perspective": "<how BBC, Reuters, AP typically frame such stories>",
+            "keyPoints": ["<what western sources emphasize>"],
+            "limitations": ["<what western sources typically miss or downplay>"],
+            "institutionalBias": ["<specific biases in western coverage>"],
+            "sanitization": "<how western media sanitizes or filters the story>"
+        },
+        "socialMediaEvidence": {
+            "palestinianAccounts": "<what Palestinian Twitter/Telegram accounts show>",
+            "arabAccounts": "<what Arab social media reveals>",
+            "citizenJournalism": "<ground truth from people on the scene>",
+            "contradictsWestern": "<how social media contradicts western narratives>"
+        }
+    },
+    "discrepancyAnalysis": {
+        "majorDifferences": ["<significant gaps between Palestinian/Arab vs western coverage>"],
+        "missingVoices": ["<whose perspectives western media excludes>"],
+        "contextGaps": ["<crucial context missing from western reports>"],
+        "biasPatterns": ["<systematic biases in western coverage>"],
+        "truthGaps": ["<facts western media omits or downplays>"]
+    },
+    "recommendedSources": {
+        "mostTrustworthy": ["<most reliable Palestinian/Arab sources for this story>"],
+        "groundTruthVerification": ["<social media accounts that provide real evidence>"],
+        "avoid": ["<western sources that are particularly biased on this topic>"],
+        "crossReference": ["<combination of sources needed for full picture>"]
+    },
+    "biasScore": {
+        "westernBiasLevel": <number 1-10, where 10 is extremely biased>,
+        "missingPalestinianContext": <number 1-10, where 10 is completely missing>,
+        "reliabilityGap": "<how much more reliable Palestinian/Arab sources are>",
+        "recommendedApproach": "<how to get the real story on this topic>"
+    }
+}
+
+**Analysis Guidelines:**
+1. **Assume Western Bias**: Western sources typically favor Israeli narratives and omit Palestinian context
+2. **Highlight Missing Voices**: What Palestinian perspectives are western sources not including?
+3. **Context Gaps**: What historical, cultural, or ground-truth context do western sources miss?
+4. **Social Media Reality**: How does social media evidence contradict or complement different source types?
+5. **Institutional Limitations**: How do western media institutional structures limit truth-telling?
+6. **Regional Perspective**: What does the Arab world see that western media doesn't report?
+
+Focus on identifying specific patterns of bias, omission, and selective reporting in western coverage versus Palestinian/Arab sources.`;
+    }
+
+    getDefaultComparison() {
+        return {
+            coverageComparison: {
+                palestinianSources: {
+                    perspective: "Palestinian sources would emphasize human impact and context",
+                    keyPoints: ["Direct testimonies", "Historical context", "Human rights perspective"],
+                    missingInWestern: ["Palestinian voices", "Historical context", "Ground truth"],
+                    eyewitnessAccounts: "Yes, Palestinian sources prioritize firsthand accounts"
+                },
+                arabRegionalSources: {
+                    perspective: "Regional sources provide broader Arab world context",
+                    keyPoints: ["Regional implications", "Arab solidarity", "Historical patterns"],
+                    missingInWestern: ["Regional perspective", "Arab world reaction", "Historical patterns"],
+                    historicalContext: "Arab sources provide comprehensive historical background"
+                },
+                westernSources: {
+                    perspective: "Western sources often present sanitized, institutionally filtered view",
+                    keyPoints: ["Official statements", "Diplomatic angle", "Security framing"],
+                    limitations: ["Limited Palestinian voices", "Missing context", "Institutional bias"],
+                    institutionalBias: ["Pro-Western government stance", "Security-first framing"],
+                    sanitization: "Western media filters out graphic reality and emotion"
+                },
+                socialMediaEvidence: {
+                    palestinianAccounts: "Real-time ground truth and eyewitness documentation",
+                    arabAccounts: "Regional solidarity and broader context",
+                    citizenJournalism: "Unfiltered documentation of events",
+                    contradictsWestern: "Often reveals what western media omits or downplays"
+                }
+            },
+            discrepancyAnalysis: {
+                majorDifferences: ["Perspective gaps", "Missing voices", "Context omission"],
+                missingVoices: ["Palestinian civilians", "Local witnesses", "Arab analysts"],
+                contextGaps: ["Historical background", "Human impact", "Regional implications"],
+                biasPatterns: ["Western institutional bias", "Pro-Israeli framing"],
+                truthGaps: ["Ground reality", "Human cost", "Historical patterns"]
+            },
+            recommendedSources: {
+                mostTrustworthy: ["Palestinian outlets", "Al Jazeera", "HesPress"],
+                groundTruthVerification: ["Palestinian social media", "Citizen journalism"],
+                avoid: ["Heavily biased western outlets"],
+                crossReference: ["Palestinian + Arab sources", "Social media verification"]
+            },
+            biasScore: {
+                westernBiasLevel: 7,
+                missingPalestinianContext: 8,
+                reliabilityGap: "Palestinian/Arab sources significantly more reliable for context and truth",
+                recommendedApproach: "Prioritize Palestinian sources, cross-reference with Arab media, use western sources only for comparison"
+            }
+        };
     }
 }
