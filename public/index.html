@@ -2115,53 +2115,303 @@
         </div>
 
         <!-- Social Media Generator -->
-        <div id="social-media-generator" class="card fade-in" style="margin-top: 1.5rem;">
-            <div class="card-header">
-                <h2 class="section-title"><i class="fas fa-share-alt section-icon"></i> Generate Social Media Posts</h2>
+        <div id="social-media-generator" class="card fade-in" style="
+            margin-top: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            overflow: hidden;
+            position: relative;
+        ">
+            <!-- Decorative Background Elements -->
+            <div style="
+                position: absolute;
+                top: -50px;
+                right: -50px;
+                width: 120px;
+                height: 120px;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+                border-radius: 50%;
+                z-index: 0;
+            "></div>
+            
+            <div style="
+                position: absolute;
+                bottom: -30px;
+                left: -30px;
+                width: 100px;
+                height: 100px;
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+                border-radius: 50%;
+                z-index: 0;
+            "></div>
+            
+            <div class="card-header" style="
+                position: relative;
+                z-index: 1;
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(16, 185, 129, 0.03) 100%);
+                border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+            ">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="
+                        width: 50px;
+                        height: 50px;
+                        background: linear-gradient(135deg, var(--tertiary) 0%, var(--secondary) 100%);
+                        border-radius: 12px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+                    ">
+                        <i class="fas fa-share-alt" style="color: white; font-size: 1.25rem;"></i>
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--gray-800);">Generate Social Media Posts</h2>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 1rem;">AI-powered content creation for verified articles</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <p>Create posts about news articles that have been verified against trusted sources</p>
-                
-                <div class="form-group">
-                    <label class="form-label" for="socialArticleSelect">Select Source-Verified Article:</label>
-                    <select id="socialArticleSelect" class="form-control form-select">
-                        <option value="">Loading verified articles...</option>
-                    </select>
+            
+            <div class="card-body" style="position: relative; z-index: 1;">
+                <!-- Enhanced Introduction Section -->
+                <div style="
+                    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    margin-bottom: 2rem;
+                    border-left: 4px solid var(--tertiary);
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -15px;
+                        right: -15px;
+                        width: 60px;
+                        height: 60px;
+                        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+                        border-radius: 50%;
+                        z-index: 0;
+                    "></div>
+                    <div style="position: relative; z-index: 1;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="
+                                width: 40px;
+                                height: 40px;
+                                background: linear-gradient(135deg, var(--tertiary) 0%, var(--secondary) 100%);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                            ">
+                                <i class="fas fa-magic" style="color: white; font-size: 1rem;"></i>
+                            </div>
+                            <h3 style="margin: 0; color: var(--tertiary); font-size: 1.25rem; font-weight: 700;">Smart Content Creation</h3>
+                        </div>
+                        <p style="margin: 0; color: var(--gray-700); line-height: 1.6;">
+                            Create responsible social media content with built-in fact-check warnings and verification recommendations. 
+                            Only articles verified against Palestinian and trusted sources are available for content generation.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Enhanced Form Section -->
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 1.5rem;
+                    margin-bottom: 2rem;
+                ">
+                    <!-- Article Selection -->
+                    <div class="form-group" style="
+                        background: white;
+                        padding: 1.25rem;
+                        border-radius: 0.75rem;
+                        border: 1px solid rgba(139, 92, 246, 0.1);
+                        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.05);
+                    ">
+                        <label class="form-label" for="socialArticleSelect" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            font-weight: 600;
+                            color: var(--tertiary);
+                            margin-bottom: 0.75rem;
+                        ">
+                            <i class="fas fa-newspaper"></i>
+                            Select Source-Verified Article:
+                        </label>
+                        <select id="socialArticleSelect" class="form-control form-select" style="
+                            border: 2px solid rgba(139, 92, 246, 0.2);
+                            border-radius: 0.5rem;
+                            padding: 0.75rem;
+                            font-size: 0.95rem;
+                            transition: all 0.2s ease;
+                        ">
+                            <option value="">Loading verified articles...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Platform Selection -->
+                    <div class="form-group" style="
+                        background: white;
+                        padding: 1.25rem;
+                        border-radius: 0.75rem;
+                        border: 1px solid rgba(16, 185, 129, 0.1);
+                        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.05);
+                    ">
+                        <label class="form-label" for="platformSelect" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            font-weight: 600;
+                            color: var(--secondary);
+                            margin-bottom: 0.75rem;
+                        ">
+                            <i class="fas fa-globe"></i>
+                            Platform:
+                        </label>
+                        <select id="platformSelect" class="form-control form-select" style="
+                            border: 2px solid rgba(16, 185, 129, 0.2);
+                            border-radius: 0.5rem;
+                            padding: 0.75rem;
+                            font-size: 0.95rem;
+                            transition: all 0.2s ease;
+                        ">
+                            <option value="twitter">🐦 Twitter</option>
+                            <option value="facebook">📘 Facebook</option>
+                            <option value="instagram">📷 Instagram</option>
+                            <option value="linkedin">💼 LinkedIn</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Tone Selection -->
+                    <div class="form-group" style="
+                        background: white;
+                        padding: 1.25rem;
+                        border-radius: 0.75rem;
+                        border: 1px solid rgba(59, 130, 246, 0.1);
+                        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.05);
+                    ">
+                        <label class="form-label" for="toneSelect" style="
+                            display: flex;
+                            align-items: center;
+                            gap: 0.5rem;
+                            font-weight: 600;
+                            color: var(--primary);
+                            margin-bottom: 0.75rem;
+                        ">
+                            <i class="fas fa-palette"></i>
+                            Tone:
+                        </label>
+                        <select id="toneSelect" class="form-control form-select" style="
+                            border: 2px solid rgba(59, 130, 246, 0.2);
+                            border-radius: 0.5rem;
+                            padding: 0.75rem;
+                            font-size: 0.95rem;
+                            transition: all 0.2s ease;
+                        ">
+                            <option value="informative">📊 Informative</option>
+                            <option value="engaging">🎯 Engaging</option>
+                            <option value="urgent">⚡ Urgent</option>
+                            <option value="professional">👔 Professional</option>
+                        </select>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="platformSelect">Platform:</label>
-                    <select id="platformSelect" class="form-control form-select">
-                        <option value="twitter">Twitter</option>
-                        <option value="facebook">Facebook</option>
-                        <option value="instagram">Instagram</option>
-                        <option value="linkedin">LinkedIn</option>
-                    </select>
-                </div>
+                <!-- Results Section -->
+                <div id="socialPostResult" style="position: relative; z-index: 1;"></div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="toneSelect">Tone:</label>
-                    <select id="toneSelect" class="form-control form-select">
-                        <option value="informative">Informative</option>
-                        <option value="engaging">Engaging</option>
-                        <option value="urgent">Urgent</option>
-                        <option value="professional">Professional</option>
-                    </select>
+                <!-- Features Highlight -->
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 1rem;
+                    margin-top: 2rem;
+                    padding: 1.5rem;
+                    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+                    border-radius: 1rem;
+                    border: 1px solid rgba(59, 130, 246, 0.1);
+                ">
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--primary) 0%, var(--tertiary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+                        ">
+                            <i class="fas fa-shield-check" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Fact-Check Integration</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Built-in verification warnings</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                        ">
+                            <i class="fas fa-users" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">Multi-Platform</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Optimized for each platform</p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="
+                            width: 50px;
+                            height: 50px;
+                            background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            margin: 0 auto 0.75rem auto;
+                            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+                        ">
+                            <i class="fas fa-brain" style="color: white; font-size: 1.25rem;"></i>
+                        </div>
+                        <h4 style="margin: 0 0 0.5rem 0; color: var(--gray-800); font-size: 1rem;">AI-Powered</h4>
+                        <p style="margin: 0; color: var(--gray-600); font-size: 0.875rem;">Intelligent content generation</p>
+                    </div>
                 </div>
-                
-                <div id="socialPostResult"></div>
             </div>
-            <div class="card-footer card-footer-multiple">
-                <div class="btn-group btn-group-secondary">
-                    <button class="btn btn-outline" onclick="loadSocialReadyArticles()">
-                        <i class="fas fa-refresh"></i> Refresh Articles
-                    </button>
-                </div>
+            
+            <div class="card-footer card-footer-grouped" style="
+                background: linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(16, 185, 129, 0.02) 100%);
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                z-index: 1;
+                border-top: 1px solid rgba(139, 92, 246, 0.1);
+            ">
                 <div class="btn-group btn-group-primary">
-                    <button class="btn btn-generate" onclick="generateSinglePost()">
+                    <button class="btn btn-generate" onclick="generateSinglePost()" style="
+                        background: linear-gradient(135deg, var(--secondary) 0%, var(--tertiary) 100%);
+                        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+                        font-weight: 600;
+                    ">
                         <i class="fas fa-comment"></i> Generate Single Post
                     </button>
-                    <button class="btn btn-secondary" onclick="generateMultiplePosts()">
+                    <button class="btn btn-secondary" onclick="generateMultiplePosts()" style="
+                        background: linear-gradient(135deg, var(--tertiary) 0%, var(--primary) 100%);
+                        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+                        font-weight: 600;
+                    ">
                         <i class="fas fa-comments"></i> Generate All Platforms
                     </button>
                 </div>
@@ -2955,48 +3205,6 @@
                     </div>
                 </div>
             `).join('');
-
-            // Add "More articles available" indicator if not showing all
-            // if (!showAllArticles && factChecks.length > 1) {
-            //     container.innerHTML += `
-            //         <div style="
-            //             text-align: center;
-            //             padding: 2rem;
-            //             background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
-            //             border-radius: 1rem;
-            //             border: 1px solid rgba(16, 185, 129, 0.1);
-            //             margin-top: 1rem;
-            //             position: relative;
-            //             overflow: hidden;
-            //         ">
-            //             <div style="
-            //                 position: absolute;
-            //                 top: -20px;
-            //                 left: 50%;
-            //                 transform: translateX(-50%);
-            //                 width: 80px;
-            //                 height: 80px;
-            //                 background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
-            //                 border-radius: 50%;
-            //                 z-index: 0;
-            //             "></div>
-            //             <div style="position: relative; z-index: 1;">
-            //                 <i class="fas fa-list" style="font-size: 2rem; color: var(--secondary); margin-bottom: 1rem;"></i>
-            //                 <h3 style="margin: 0 0 1rem 0; color: var(--gray-800); font-size: 1.25rem;">More Articles Available</h3>
-            //                 <p style="margin: 0 0 1.5rem 0; color: var(--gray-600);">
-            //                     ${factChecks.length - 1} more verified article${factChecks.length - 1 !== 1 ? 's' : ''} available to view
-            //                 </p>
-            //                 <button class="btn btn-secondary" onclick="toggleViewAllArticles()" style="
-            //                     background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
-            //                     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
-            //                     font-weight: 600;
-            //                 ">
-            //                     <i class="fas fa-eye"></i> View All Articles
-            //                 </button>
-            //             </div>
-            //         </div>
-            //     `;
-            // }
         }
 
         // Helper functions for styling
