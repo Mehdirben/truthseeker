@@ -888,6 +888,3 @@ This tool should NOT be used for:
 ---
 
 **Made with ❤️ for truth, transparency, and media literacy**
-
-*Last updated: January 2024*
-*Version: 1.0.0* 
